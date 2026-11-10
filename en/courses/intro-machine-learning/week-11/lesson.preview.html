@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Unsupervised Learning · Study</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="2081294bea971f7358a3bf1fc5feb797c7e667b8926b88d6684e8299aa68fab6" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-11/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-11/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Unsupervised Learning · Study</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-11/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="unsupervised-learning-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Changing the number of clusters and the scale can change how the same data are grouped. Interpret the structure without assigning meaning to cluster numbers themselves.</p>
+</section><section class="notebook-cell">
+<p><span id="정답-없이-묶기"></span></p>
+<h2 id="grouping-without-correct-answers">Grouping without Correct Answers</h2>
+<p>K-means reduces distances between centers and samples for a specified number of clusters. Cluster numbers are arbitrary names; examine centers, variance, and assignment structure rather than the numbers themselves.</p>
+</section><section class="notebook-cell">
+<p><span id="거리의-단위"></span></p>
+<h2 id="distance-units">Distance units</h2>
+<p>A feature with a large range can dominate distances. Compare before and after Standardization and across cluster counts, but do not conclude that clusters are meaningful solely from decreasing inertia.</p>
+<p>Example output order: Inertia → mean Silhouette.</p>
+<ul>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>a</mi><annotation encoding="application/x-tex">a</annotation></semantics></math></span>: Mean distance within the same cluster.</li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>b</mi><annotation encoding="application/x-tex">b</annotation></semantics></math></span>: Mean distance to the nearest other cluster.</li>
+<li>Silhouette: <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>s</mi><mo>=</mo><mo form="prefix" stretchy="false">(</mo><mi>b</mi><mo>−</mo><mi>a</mi><mo form="postfix" stretchy="false">)</mo><mi>/</mi><mrow><mi mathvariant="normal">max</mi><mo>⁡</mo></mrow><mo form="prefix" stretchy="false">(</mo><mi>a</mi><mo>,</mo><mi>b</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">s=(b-a)/\max(a,b)</annotation></semantics></math></span>, range <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="false">[</mo><mi>−</mi><mn>1</mn><mo>,</mo><mn>1</mn><mo form="postfix" stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[-1,1]</annotation></semantics></math></span>.</li>
+<li>Close to 1: Well separated from other clusters.</li>
+<li>Near 0: Close to a cluster boundary.</li>
+<li>Negative: A sample closer to another cluster.</li>
+</ul>
+<p>Interpret the mean values and cluster plots together.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>Use <code>make_blobs(n_samples=180,centers=3,cluster_std=.8,random_state=7)</code> and <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>2</mn><mo>,</mo><mn>3</mn><mo>,</mo><mn>4</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">K\in\{2,3,4\}</annotation></semantics></math></span>.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from sklearn.datasets import make_blobs
+from sklearn.cluster import KMeans
+from sklearn.metrics import silhouette_score
+X,_=make_blobs(n_samples=180,centers=3,cluster_std=.8,random_state=7)
+model=KMeans(n_clusters=3,random_state=7,n_init=10).fit(X)
+print(model.inertia_,silhouette_score(X,model.labels_))
+</code></pre><pre class="notebook-output">218.32342403479697 0.8287785157574988
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Value-Based Reinforcement Learning · Study</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="09fd472694e3d923d76c651fc518608ce5e89383de9f56115b1fbf7a1388e54d" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/reinforcement-learning/week-02/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/reinforcement-learning/week-02/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Reinforcement Learning for Electrical Engineering</a></header><main class="directory" id="main"><h1>Value-Based Reinforcement Learning · Study</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-02/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="value-based-reinforcement-learning-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>Run the baseline Queue example with NumPy. Compare policies on seed=100…104, which were not used for training.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Solving a small problem with a table provides a baseline for comparing complex function approximation models.</p>
+</section><section class="notebook-cell">
+<p><span id="q-갱신"></span></p>
+<h2 id="q-update">Q update</h2>
+<p>Q(s,a) ← Q(s,a)+α[r+γ max Q(s′,·)−Q(s,a)]. Exclude future value when the task itself terminates. Interpret time limits separately.</p>
+</section><section class="notebook-cell">
+<p><span id="수집과-평가"></span></p>
+<h2 id="collection-and-evaluation">Collection and evaluation</h2>
+<p>Exploratory actions are needed during training, but evaluate policies separately under the same conditions. Also inspect Q-values for unvisited states.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>Learn a Q-table for Queue with <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>q</mi><mo>=</mo><mn>0</mn></mrow><annotation encoding="application/x-tex">q=0</annotation></semantics></math></span>…20 and 3 actions. Train for 50 episodes using <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>.95</mn></mrow><annotation encoding="application/x-tex">\gamma=.95</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>α</mi><mo>=</mo><mn>.1</mn></mrow><annotation encoding="application/x-tex">\alpha=.1</annotation></semantics></math></span>, and <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ϵ</mi><mo>=</mo><mn>.2</mn></mrow><annotation encoding="application/x-tex">\epsilon=.2</annotation></semantics></math></span>, with 100 steps per episode.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>"""Synthetic service queue. An action chooses capacity, including its energy cost."""
+import numpy as np
+
+class Queue:
+    def reset(self, seed=0):
+        self.rng = np.random.default_rng(seed)
+        self.q, self.t = 0, 0
+        return self.q
+
+    def step(self, action):
+        capacity = (0, 2, 4)[int(action)]
+        arriving = int(self.rng.poisson(2))
+        raw = max(0, self.q - capacity) + arriving
+        dropped = max(0, raw - 20)
+        self.q = min(20, raw)
+        self.t += 1
+        reward = -(self.q + .2 * capacity**2 + 10 * dropped)
+        return self.q, reward, False, self.t &gt;= 100, {'queue': self.q, 'capacity': capacity, 'dropped': dropped}
+
+def evaluate(policy, seeds=range(100, 105)):
+    rows = []
+    for seed in seeds:
+        env = Queue(); q = env.reset(seed)
+        total = waiting = energy = dropped = 0
+        while True:
+            q, r, terminated, truncated, info = env.step(policy(q))
+            total += r; waiting += q; energy += info['capacity']**2; dropped += info['dropped']
+            if terminated or truncated: break
+        rows.append([total, waiting / env.t, energy / env.t, dropped])
+    return np.array(rows)
+
+policies = {'constant': lambda q: 1, 'threshold': lambda q: 0 if q == 0 else (1 if q &lt; 5 else 2)}
+for name, policy in policies.items():
+    print(name, evaluate(policy).mean(axis=0))
+
+Q=np.zeros((21,3));visits=np.zeros((21,3),dtype=int);history=[]
+rng=np.random.default_rng(7)
+for episode in range(50):
+    env=Queue();q=env.reset(episode);total=0
+    for k in range(100):
+        a=int(rng.integers(3)) if rng.random()&lt;.2 else int(Q[q].argmax())
+        nq,r,te,tr,_=env.step(a)
+        target=r+.95*(not te)*Q[nq].max()
+        Q[q,a]+=.1*(target-Q[q,a]);visits[q,a]+=1;q=nq;total+=r
+        if te or tr:break
+    history.append(total)
+print(evaluate(lambda q:int(Q[q].argmax())).mean(0))
+</code></pre><pre class="notebook-output">constant [-921.2      8.052    4.       3.6  ]
+threshold [-387.4     2.77    5.52    0.  ]
+[-416.6      2.758    7.04     0.   ]
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<ul>
+<li><a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-02/RL_W2.ipynb#copy=true" data-course-overlay="Preview Colab notebook" data-course-reference="" data-document-version="96e57a1a19950ebc" href="RL_W2.preview.html">Value-Based Reinforcement Learning</a></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

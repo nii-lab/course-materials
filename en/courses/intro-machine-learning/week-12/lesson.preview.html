@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Multilayer Perceptron · Study</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="5213cb5c235df2b40a1500bd5d7b3353c4fbfccd54bfa11e1ab69b4d0778a024" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-12/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-12/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Multilayer Perceptron · Study</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-12/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="multilayer-perceptron-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Compare a complex model with a simple baseline classifier on the same data to examine whether complexity is always beneficial.</p>
+</section><section class="notebook-cell">
+<p><span id="단순-모델을-먼저-두기"></span></p>
+<h2 id="start-with-a-simple-model">Start with a Simple Model</h2>
+<p>An MLP can represent nonlinear relationships, but increasing its size adds Parameters to learn and settings to tune. A simple classifier as a baseline on the same data reveals the benefits of the added complexity.</p>
+</section><section class="notebook-cell">
+<p><span id="전처리와-평가를-묶기"></span></p>
+<h2 id="combining-preprocessing-and-evaluation">Combining Preprocessing and Evaluation</h2>
+<p>Fit standardization on training data, and apply only the same transformation to evaluation data. Combining transformations and the model in a scikit-learn Pipeline helps preserve this order during splitting and cross-validation.</p>
+<p><code>ConvergenceWarning</code> means that optimization did not meet its convergence criterion within the specified iterations. For this comparison, keep <code>max_iter</code> as specified and record both warnings and scores.</p>
+<p>Scores from runs with warnings alone are insufficient to conclude which model is better.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>Split Iris using the same 70/30 split as above, and fit StandardScaler only on Train.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+X,y=load_iris(return_X_y=True)
+Xtr,Xte,ytr,yte=train_test_split(X,y,test_size=.3,random_state=7,stratify=y)
+scaler=StandardScaler().fit(Xtr);Xtr=scaler.transform(Xtr);Xte=scaler.transform(Xte)
+</code></pre></section><section class="notebook-cell">
+<p>Train and evaluate one model using the split and Standardization results prepared above.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>model = LogisticRegression(max_iter=500)
+model.fit(Xtr, ytr)
+prediction = model.predict(Xte)
+print("Train Accuracy:", model.score(Xtr, ytr))
+print("Test Accuracy:", model.score(Xte, yte))</code></pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

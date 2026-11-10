@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Week5-1_Github_Repository_Basic</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="681855c90d0065ed18446cbec51c7bb7aefbfce0e176f846e62ea2562c2db608" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/git-collaboration/Week5-1_Github_Repository_Basic.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/git-collaboration/Week5-1_Github_Repository_Basic.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="Week5-1_Github_Repository_Basic.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>Week5-1_Github_Repository_Basic</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="Week5-1_Github_Repository_Basic.ipynb" href="Week5-1_Github_Repository_Basic.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/git-collaboration/Week5-1_Github_Repository_Basic.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="원격-repository로부터-local로-동기화하기"></span></p>
+<h3 id="1-synchronize-locally-from-the-remote-repository">1. Synchronize locally from the remote repository</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from google.colab import drive
+drive.mount('/content/drive')</code></pre><pre class="notebook-output">Mounted at /content/drive
+</pre></section><section class="notebook-cell"><pre class="notebook-code"><code>cd /content/drive/MyDrive/Colab\ Notebooks/</code></pre><pre class="notebook-output">/content/drive/MyDrive/Colab Notebooks
+</pre></section><section class="notebook-cell"><pre class="notebook-code"><code>!git clone "https://github.com/chorok-daddy/repository-basic.git"</code></pre><pre class="notebook-output">Cloning into 'repository-basic'...
+remote: Enumerating objects: 3, done.[K
+remote: Counting objects: 100% (3/3), done.[K
+remote: Compressing objects: 100% (2/2), done.[K
+remote: Total 3 (delta 0), reused 0 (delta 0), pack-reused 0[K
+Unpacking objects: 100% (3/3), done.
+</pre></section><section class="notebook-cell"><pre class="notebook-code"><code>cd repository-basic/</code></pre><pre class="notebook-output">/content/drive/My Drive/Colab Notebooks/repository-basic
+</pre></section><section class="notebook-cell"><pre class="notebook-code"><code>!git init</code></pre><pre class="notebook-output">Reinitialized existing Git repository in /content/drive/My Drive/Colab Notebooks/repository-basic/.git/
+</pre></section><section class="notebook-cell"><pre class="notebook-code"><code>!git config --global user.email "이메일 주소"
+!git config --global user.name "username"</code></pre></section><section class="notebook-cell">
+<p><span id="local에서-수정하기"></span></p>
+<h3 id="2-edit-locally">2. Edit locally</h3>
+<ul>
+<li>You can easily try editing on Google Drive using a Chrome extension.</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="local에서-commit-하기"></span></p>
+<h3 id="3-commit-locally">3. Commit locally</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>!git add .
+!git commit -m "Edit Readme.md"</code></pre><pre class="notebook-output">[main 10e840d] Edit Readme.md
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+</pre></section><section class="notebook-cell"><pre class="notebook-code"><code>!git log</code></pre></section><section class="notebook-cell">
+<p><span id="github-계정-token-발급하기"></span></p>
+<h3 id="4-generate-a-github-account-token">4. Generate a GitHub account token</h3>
+<ul>
+<li>Github - settings - developer settings - personal access tokens</li>
+<li>After generating a token, store it in a private location.</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="remote-repository로-push"></span></p>
+<h3 id="5-push-to-the-remote-repository">5. Push to the remote repository</h3>
+<ul>
+<li>!git remote add [nickname] https://[username]:[token]@github.com/[repository-address]</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>!git remote add repo-basic https://username:token@github.com/chorok-daddy/repository-basic.git</code></pre></section><section class="notebook-cell"><pre class="notebook-code"><code>!git push -u repo-basic main</code></pre><pre class="notebook-output">Counting objects: 3, done.
+Delta compression using up to 2 threads.
+Compressing objects:  50% (1/2)   
+Compressing objects: 100% (2/2)   
+Compressing objects: 100% (2/2), done.
+Writing objects:  33% (1/3)   
+Writing objects:  66% (2/3)   
+Writing objects: 100% (3/3)   
+Writing objects: 100% (3/3), 399 bytes | 133.00 KiB/s, done.
+Total 3 (delta 0), reused 0 (delta 0)
+To https://github.com/chorok-daddy/repository-basic.git
+   1bcbdc2..10e840d  main -&gt; main
+Branch 'main' set up to track remote branch 'main' from 'repo-basic'.
+</pre></section><section class="notebook-cell"><pre class="notebook-code"><code></code></pre></section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

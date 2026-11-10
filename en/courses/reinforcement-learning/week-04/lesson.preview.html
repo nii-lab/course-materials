@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>DQN variants and replay buffer sampling · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="897f7605e1ce92e32dc4a7757825e9653c5bd1e41502e3c7801a7dc7856da774" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/reinforcement-learning/week-04/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/reinforcement-learning/week-04/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Reinforcement Learning for Electrical Engineering</a></header><main class="directory" id="main"><h1>DQN variants and replay buffer sampling · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-04/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="dqn-variants와-replay-buffer-sampling-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>Uses NumPy, PyTorch, and Gymnasium. In the final activity, read an external data card and analyze transitions you collected.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Identify which problem each network modification addresses and validate one needed change, rather than applying every improvement.</p>
+</section><section class="notebook-cell">
+<p><span id="세-기법의-다른-위치"></span></p>
+<h2 id="where-the-three-techniques-differ">Where the three techniques differ</h2>
+<p>Double changes next-action selection and value evaluation; Dueling changes the Q representation; PER changes experience sampling. They do not all address the same problem.</p>
+</section><section class="notebook-cell">
+<p><span id="표현과-분포"></span></p>
+<h2 id="representation-and-distribution">Representation and distribution</h2>
+<p>Dueling can combine streams using <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>Q</mi><mo>=</mo><mi>V</mi><mo>+</mo><mi>A</mi><mo>−</mo><mrow><mi mathvariant="normal">mean</mi><mo>⁡</mo></mrow><mo form="prefix" stretchy="false">(</mo><mi>A</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">Q=V+A-\operatorname{mean}(A)</annotation></semantics></math></span>. PER samples high-error experiences more often while accounting for sampling bias and weights. It does not create states outside the experience distribution.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<ul>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">n</mi><mi mathvariant="normal">e</mi></mrow></msub><mo>=</mo><mo form="prefix" stretchy="false">[</mo><mn>2</mn><mo>,</mo><mn>4</mn><mo>,</mo><mn>3</mn><mo form="postfix" stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Q_{\mathrm{online}}=[2,4,3]</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>Q</mi><mrow><mi mathvariant="normal">t</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">t</mi></mrow></msub><mo>=</mo><mo form="prefix" stretchy="false">[</mo><mn>5</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo form="postfix" stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">Q_{\mathrm{target}}=[5,1,2]</annotation></semantics></math></span>.</li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">r=1</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>.95</mn></mrow><annotation encoding="application/x-tex">\gamma=.95</annotation></semantics></math></span>.</li>
+<li>Dueling: <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>V</mi><mo>=</mo><mn>2</mn></mrow><annotation encoding="application/x-tex">V=2</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>A</mi><mo>=</mo><mo form="prefix" stretchy="false">[</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mn>6</mn><mo form="postfix" stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">A=[1,2,6]</annotation></semantics></math></span>.</li>
+<li>TD Error: <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="false">[</mo><mn>0.1</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>5</mn><mo form="postfix" stretchy="false">]</mo></mrow><annotation encoding="application/x-tex">[0.1,1,5]</annotation></semantics></math></span>.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+online=np.array([2.,4.,3.]);target=np.array([5.,1.,2.])
+print('DQN',1+.95*target.max(),'Double',1+.95*target[online.argmax()])
+advantage=np.array([1.,2.,6.]);print('Dueling Q',2+advantage-advantage.mean())
+error=np.array([.1,1.,5.])
+for alpha in [0,.6]:
+    probability=(error+1e-5)**alpha;probability/=probability.sum();print(alpha,probability)
+</code></pre><pre class="notebook-output">DQN 5.75 Double 1.95
+Dueling Q [0. 1. 5.]
+0 [0.33333333 0.33333333 0.33333333]
+0.6 [0.06478095 0.25788367 0.67733538]
+</pre></section><section class="notebook-cell">
+<p><span id="공식-문서데이터"></span></p>
+<h2 id="official-documentation-and-data">Official documentation and data</h2>
+<ul>
+<li><a href="https://minari.farama.org/datasets/D4RL/minigrid/fourrooms-random-v0/" rel="noopener noreferrer" target="_blank">Minari · Fourrooms-Random dataset card</a></li>
+<li><a href="https://minari.farama.org/content/basic_usage/" rel="noopener noreferrer" target="_blank">Minari · data usage</a></li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<ul>
+<li><a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-04/RL_W4.ipynb#copy=true" data-course-overlay="Preview Colab notebook" data-course-reference="" data-document-version="54a46b270a1989ff" href="RL_W4.preview.html">Double DQN</a></li>
+<li><a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-05/RL_W5.ipynb#copy=true" data-course-overlay="Preview Colab notebook" data-course-reference="" data-document-version="b6707e1578e3a1ae" href="../week-05/RL_W5.preview.html">Dueling DQN</a></li>
+<li><a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-06/RL_W6.ipynb#copy=true" data-course-overlay="Preview Colab notebook" data-course-reference="" data-document-version="e2f688f497a3d9a7" href="../week-06/RL_W6.preview.html">Prioritized Experience Replay (PER)</a></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

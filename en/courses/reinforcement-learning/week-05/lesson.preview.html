@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Policy Gradient and Actor–Critic · Study</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="29b0070099b21bd50b4b41f0388606b07bd6fa1961781e77488ecac16ec182e8" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/reinforcement-learning/week-05/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/reinforcement-learning/week-05/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Reinforcement Learning for Electrical Engineering</a></header><main class="directory" id="main"><h1>Policy Gradient and Actor–Critic · Study</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-05/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="policy-gradient와-actorcritic-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<ul>
+<li>Required packages: gymnasium, stable-baselines3, and PyTorch.</li>
+<li>SB3 policy: <code>MlpPolicy</code>.</li>
+<li>Gymnasium <code>step</code>: 5 return values.</li>
+</ul>
+<p>If the required package is missing, run <code>%pip install gymnasium==1.3.0 stable-baselines3==2.9.2</code> in a Colab or Jupyter code cell.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Examine direct updates to a stochastic policy, then investigate how a critic changes learning over long episodes.</p>
+</section><section class="notebook-cell">
+<p><span id="정책을-직접-갱신하기"></span></p>
+<h2 id="update-the-policy-directly">Update the policy directly</h2>
+<p>REINFORCE weights the log probability of the selected action by the return. Subtracting a baseline does not change the reward function itself.</p>
+</section><section class="notebook-cell">
+<p><span id="critic의-역할"></span></p>
+<h2 id="the-critics-role">The critic's role</h2>
+<p>A2C uses a critic to estimate future values, computes advantages, and updates the actor. Rollout length changes the balance between actual rewards and bootstrapping.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>Queue, softmax policy 1→16→3, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>γ</mi><mo>=</mo><mn>.95</mn></mrow><annotation encoding="application/x-tex">\gamma=.95</annotation></semantics></math></span>, Adam .005, and 30 episodes. Use a simple baseline that subtracts the mean return for each episode.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>"""Synthetic service queue. An action chooses capacity, including its energy cost."""
+import numpy as np
+
+class Queue:
+    def reset(self, seed=0):
+        self.rng = np.random.default_rng(seed)
+        self.q, self.t = 0, 0
+        return self.q
+
+    def step(self, action):
+        capacity = (0, 2, 4)[int(action)]
+        arriving = int(self.rng.poisson(2))
+        raw = max(0, self.q - capacity) + arriving
+        dropped = max(0, raw - 20)
+        self.q = min(20, raw)
+        self.t += 1
+        reward = -(self.q + .2 * capacity**2 + 10 * dropped)
+        return self.q, reward, False, self.t &gt;= 100, {'queue': self.q, 'capacity': capacity, 'dropped': dropped}
+
+def evaluate(policy, seeds=range(100, 105)):
+    rows = []
+    for seed in seeds:
+        env = Queue(); q = env.reset(seed)
+        total = waiting = energy = dropped = 0
+        while True:
+            q, r, terminated, truncated, info = env.step(policy(q))
+            total += r; waiting += q; energy += info['capacity']**2; dropped += info['dropped']
+            if terminated or truncated: break
+        rows.append([total, waiting / env.t, energy / env.t, dropped])
+    return np.array(rows)
+
+policies = {'constant': lambda q: 1, 'threshold': lambda q: 0 if q == 0 else (1 if q &lt; 5 else 2)}
+for name, policy in policies.items():
+    print(name, evaluate(policy).mean(axis=0))
+
+
+import torch
+from torch import nn
+from torch.distributions import Categorical
+def fit_reinforce(seed=0,baseline=True):
+    torch.manual_seed(seed)
+    model=nn.Sequential(nn.Linear(1,16),nn.Tanh(),nn.Linear(16,3))
+    optimizer=torch.optim.Adam(model.parameters(),lr=.005);history=[]
+    for episode in range(30):
+        env=Queue();q=env.reset(seed*1000+episode);logs=[];rewards=[]
+        for k in range(100):
+            distribution=Categorical(logits=model(torch.tensor([[q/20]],dtype=torch.float32)))
+            a=distribution.sample();q,r,te,tr,_=env.step(int(a.item()))
+            logs.append(distribution.log_prob(a).squeeze());rewards.append(r/20)
+            if te or tr:break
+        returns=[];g=0
+        for r in rewards[::-1]:g=r+.95*g;returns.append(g)
+        returns=torch.tensor(returns[::-1],dtype=torch.float32)
+        advantage=returns-returns.mean() if baseline else returns
+        loss=-(torch.stack(logs)*advantage).mean()
+        optimizer.zero_grad();loss.backward();optimizer.step();history.append(sum(rewards)*20)
+    def policy(q):
+        with torch.no_grad():return int(model(torch.tensor([[q/20]],dtype=torch.float32)).argmax())
+    return policy,history
+policy,history=fit_reinforce()
+print(evaluate(policy).mean(0))
+</code></pre><pre class="notebook-output">constant [-921.2      8.052    4.       3.6  ]
+threshold [-387.4     2.77    5.52    0.  ]
+[-531.4      2.114   16.       0.   ]
+</pre></section><section class="notebook-cell">
+<p><span id="공식-문서데이터"></span></p>
+<h2 id="official-documentation-and-data">Official documentation and data</h2>
+<ul>
+<li><a href="https://stable-baselines3.readthedocs.io/en/master/modules/a2c.html" rel="noopener noreferrer" target="_blank">SB3 · A2C</a></li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<ul>
+<li><a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-07/RL_W7.ipynb#copy=true" data-course-overlay="Preview Colab notebook" data-course-reference="" data-document-version="b2efa7d53b383b88" href="../week-07/RL_W7.preview.html">REINFORCE</a></li>
+<li><a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-08/RL_W8.ipynb#copy=true" data-course-overlay="Preview Colab notebook" data-course-reference="" data-document-version="241d0a8261a0377e" href="../week-08/RL_W8.preview.html">Advantage Actor-Critic (A2C)</a></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

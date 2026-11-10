@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Start RL in Colab with PyTorch and Gym</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="3bec14babe6768b640e1c6bbeaaf629a4c03d1207a0cbe3103f2e2f21b01acac" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/reinforcement-learning/getting-started/GettingStarted.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/reinforcement-learning/getting-started/GettingStarted.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="GettingStarted.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Reinforcement Learning for Electrical Engineering</a></header><main class="directory" id="main"><h1>Start RL in Colab with PyTorch and Gym</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="GettingStarted.ipynb" href="GettingStarted.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/getting-started/GettingStarted.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="colab에서-pytorch와-gym-기반으로-rl-시작하기"></span></p>
+</section><section class="notebook-cell">
+<p><span id="colab에-기본으로-설치된-pytorch와-gym-버전-확인"></span></p>
+<h3 id="check-the-pytorch-and-gym-versions-preinstalled-in-colab">Check the PyTorch and Gym versions preinstalled in Colab</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import torch
+import gymnasium as gym
+
+print(torch.__version__)
+print(gym.__version__)</code></pre><pre class="notebook-output">2.5.1+cu124
+0.25.2
+</pre></section><section class="notebook-cell">
+<p><span id="샘플코드-돌려보기-random-cartpole"></span></p>
+<h3 id="run-the-sample-code-random-cartpole">Run the sample code (Random CartPole)</h3>
+<ul>
+<li>Simulate Cartpole with random control inputs</li>
+<li>Without effective control, the pole falls and the episode ends after only 1–2 steps.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>def run_random_agent(env_name="CartPole-v1", max_episodes=2, max_steps=200):
+    env = gym.make(env_name)
+    for episode in range(max_episodes):
+        state, info = env.reset()
+        total_reward = 0
+        for step in range(max_steps):
+            action = env.action_space.sample()  # Random action
+            next_state, reward, terminated, truncated, info = env.step(action)
+            total_reward += reward
+            state = next_state
+            if terminated or truncated:
+                print(f"Episode {episode+1} finished after {step+1} steps, total reward: {total_reward}")
+                break
+    env.close()
+
+def tensor_example():
+    x = torch.randn((3,4))
+    print("PyTorch 텐서 예제:")
+    print(x)
+    print("텐서 크기:", x.shape)
+
+if __name__ == "__main__":
+    run_random_agent()
+    tensor_example()</code></pre><pre class="notebook-output">Episode 1 finished after 20 steps, total reward: 20.0
+Episode 2 finished after 15 steps, total reward: 15.0
+PyTorch 텐서 예제:
+tensor([[-0.5245,  0.4341,  0.1545,  1.0109],
+        [ 0.4827, -2.6886, -0.5962, -0.1738],
+        [ 0.3569, -0.1071, -0.3224,  0.0959]])
+텐서 크기: torch.Size([3, 4])
+</pre></section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>NumPy · Study</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="0bdfc1fa9f0e70f244349499ac45bc4d90e77881c1b1a2b51316e6e763051a9d" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-05/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-05/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>NumPy · Study</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-05/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="numpy-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Practice calculating aggregates by sample and by feature without confusing rows and columns.</p>
+</section><section class="notebook-cell">
+<p><span id="배열-축에-의미-붙이기"></span></p>
+<h2 id="assign-meaning-to-array-axes">Assign meaning to array axes</h2>
+<p>If rows represent measurement times and columns represent sensor channels, <code>axis=0</code> aggregation summarizes each channel. A correct Shape does not ensure the intended calculation. Choose elementwise or matrix multiplication according to its physical meaning.</p>
+</section><section class="notebook-cell">
+<p><span id="시간과-잡음"></span></p>
+<h2 id="time-and-noise">Time and noise</h2>
+<p>To interpret differences as velocity, divide by the measurement time interval. A moving average reduces noise but blurs abrupt changes, and the sample count may differ at boundaries. Compare before and after filtering over the same time interval.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>X</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>6</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>5</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>3</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>5</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>7</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">X=\begin{bmatrix}2&amp;4&amp;6\\1&amp;3&amp;5\\0&amp;2&amp;4\\3&amp;5&amp;7\end{bmatrix}</annotation></semantics></math></span>, where rows are samples and columns are features.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+X=np.array([[2,4,6],[1,3,5],[0,2,4],[3,5,7]])
+print(X.mean(axis=0),X.mean(axis=1))
+</code></pre><pre class="notebook-output">[1.5 3.5 5.5] [4. 3. 2. 5.]
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>제어문과 함수</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/intro-machine-learning/week-04/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="practice.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/intro-machine-learning/week-04/practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">머신러닝의 이해</a></header><main class="directory" id="main"><h1>제어문과 함수</h1><nav class="notebook-actions"><a download="" href="practice.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/intro-machine-learning/week-04/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="학습-목표">학습 목표</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/objective -->
+<p>경계값 하나에서 판단이 달라집니다. 조건문을 함수로 만들고 정상·경계 입력을 대조합니다. <!-- /exercise-guidance:intro-machine-learning/week-04/objective --></p>
+</section><section class="notebook-cell">
+<h2 id="조건과-반복">조건과 반복</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/activity-1 -->
+<h3 id="시작-조건">시작 조건</h3>
+<p>점수=[45,60,75,90]이고 합격 기준은 60 이상입니다.</p>
+<h3 id="진행-방법">진행 방법</h3>
+<ol type="1">
+<li>각 점수에 대한 합격 여부를 for와 if로 계산하세요.</li>
+<li>동일 처리를 pass_flags(scores,threshold) 함수로 만들고 두 결과를 비교하세요.</li>
+</ol>
+<h3 id="남길-결과">남길 결과</h3>
+<ul>
+<li>4행 표와 재사용 가능한 함수. <!-- /exercise-guidance:intro-machine-learning/week-04/activity-1 --></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>scores=[45,60,75,90]
+def pass_flags(values,threshold=60):
+    return [v&gt;=threshold for v in values]
+print(pass_flags(scores))
+</code></pre></section><section class="notebook-cell">
+<h2 id="결과-기록자가-점검">결과 기록·자가 점검</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/activity-1-record -->
+<p><strong>점수:</strong></p>
+<p><strong>반복문 결과:</strong></p>
+<p><strong>함수 결과:</strong></p>
+<p><strong>일치 여부:</strong></p>
+<h3 id="확인할-점">확인할 점</h3>
+<ul>
+<li>경계값 60을 실제로 테스트했는가? <!-- /exercise-guidance:intro-machine-learning/week-04/activity-1-record --></li>
+</ul>
+</section><section class="notebook-cell">
+<h2 id="기준값-변화">기준값 변화</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/activity-2 -->
+<h3 id="시작-조건-1">시작 조건</h3>
+<p><code>threshold=50</code>,60,80에서 합격자 수와 경계 표본을 비교합니다.</p>
+<h3 id="진행-방법-1">진행 방법</h3>
+<ol type="1">
+<li><code>pass_flags</code>를 Threshold <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>50</mn><mo>,</mo><mn>60</mn><mo>,</mo><mn>80</mn></mrow><annotation encoding="application/x-tex">50,60,80</annotation></semantics></math></span>으로 각각 호출하세요. 점수 네 개는 바꾸지 않습니다.</li>
+<li>Threshold별 합격 여부 네 개와 합격자 수를 표로 적으세요. Threshold와 점수가 같은 표본에서 사용하는 비교 연산자가 <code>&gt;=</code>인지 확인하세요.</li>
+<li>Threshold가 바뀌어 판정이 달라진 점수를 지목하고, 바뀐 이유를 설명하세요.</li>
+</ol>
+<h3 id="남길-결과-1">남길 결과</h3>
+<ul>
+<li>Threshold별 판정과 합격자 수의 표. <!-- /exercise-guidance:intro-machine-learning/week-04/activity-2 --></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>thresholds=[50,60,80]
+</code></pre></section><section class="notebook-cell">
+<h2 id="결과-기록자가-점검-1">결과 기록·자가 점검</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/activity-2-record -->
+<p><strong>Threshold:</strong></p>
+<p><strong>네 점수의 판정:</strong></p>
+<p><strong>합격자 수:</strong></p>
+<p><strong>판정이 바뀐 점수:</strong></p>
+<h3 id="확인할-점-1">확인할 점</h3>
+<ul>
+<li>기준 점수와 같은 값의 판정을 기록했는가? <!-- /exercise-guidance:intro-machine-learning/week-04/activity-2-record --></li>
+</ul>
+</section><section class="notebook-cell">
+<h2 id="다른-입력에서도-확인하기">다른 입력에서도 확인하기</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/activity-3 -->
+<h3 id="시작-조건-2">시작 조건</h3>
+<p>점수 [59,60,61]과 빈 List로 함수의 경계값을 확인합니다.</p>
+<h3 id="진행-방법-2">진행 방법</h3>
+<ol type="1">
+<li>Threshold 60을 유지하고 점수 <code>[59,60,61]</code>과 빈 List에 대한 함수 반환값을 실행 전에 적으세요.</li>
+<li>두 입력에 <code>pass_flags</code>를 호출하고 예상·실제 반환값을 나란히 기록하세요. 점수 60의 판정과 빈 입력의 반환 형태를 설명하세요.</li>
+</ol>
+<h3 id="남길-결과-2">남길 결과</h3>
+<ul>
+<li>두 입력의 예상·실제 반환값과 경계값 설명. <!-- /exercise-guidance:intro-machine-learning/week-04/activity-3 --></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># 앞 활동의 데이터와 함수를 사용해 지정된 새 예제를 검사하세요.
+</code></pre></section><section class="notebook-cell">
+<h2 id="결과-기록자가-점검-2">결과 기록·자가 점검</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/activity-3-record -->
+<p><strong>입력 점수:</strong></p>
+<p><strong>실행 전 예상:</strong></p>
+<p><strong>실제 반환값:</strong></p>
+<p><strong>경계값·빈 입력의 처리:</strong></p>
+<h3 id="확인할-점-2">확인할 점</h3>
+<ul>
+<li>빈 입력도 같은 함수로 실행했는가? <!-- /exercise-guidance:intro-machine-learning/week-04/activity-3-record --></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

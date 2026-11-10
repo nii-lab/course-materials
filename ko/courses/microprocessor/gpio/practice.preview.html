@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>GPIO</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/microprocessor/gpio/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="practice.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/microprocessor/gpio/practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">마이크로프로세서응용설계</a></header><main class="directory" id="main"><h1>GPIO</h1><nav class="notebook-actions"><a download="" href="practice.ipynb">Colab 노트북 다운로드</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="학습-목표">학습 목표</h2>
+<!-- exercise-guidance:microprocessor/gpio/objective -->
+<p>한 번 누른 버튼에서 여러 신호가 들어오는 현상을 시간 기록으로 읽고, 입력 처리 규칙을 정합니다. <!-- /exercise-guidance:microprocessor/gpio/objective --></p>
+</section><section class="notebook-cell">
+<h2 id="실행-조건">실행 조건</h2>
+<!-- exercise-guidance:microprocessor/gpio/execution -->
+<p>기준 실습은 기록된 파형으로 수행합니다. 장치 확장에서는 원본 RPi.GPIO 코드의 BCM 번호·입력/출력 설정을 사용한 보드와 대조하세요. <!-- /exercise-guidance:microprocessor/gpio/execution --></p>
+</section><section class="notebook-cell">
+<h2 id="gpio-edge-detection">GPIO Edge Detection</h2>
+<!-- exercise-guidance:microprocessor/gpio/activity-1 -->
+<h3 id="시작-조건">시작 조건</h3>
+<p>(t_ms,level)=[(0,0),(10,1),(12,0),(14,1),(50,0),(80,1)]입니다. 두 기록 사이에는 직전 level이 유지됩니다.</p>
+<h3 id="진행-방법">진행 방법</h3>
+<ol type="1">
+<li>0~100 ms를 1 ms 간격으로 재구성하고 step plot을 그리세요.</li>
+<li>원 기록에서 rising·falling edge 시점을 각각 찾으세요.</li>
+<li>rising edge만 Counter에 반영한 누적 개수를 기록하세요.</li>
+</ol>
+<h3 id="남길-결과">남길 결과</h3>
+<ul>
+<li>입력 step plot과 전환 시점 표. <!-- /exercise-guidance:microprocessor/gpio/activity-1 --></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+events=[(0,0),(10,1),(12,0),(14,1),(50,0),(80,1)]
+rising=[t for (t,x),(_,previous) in zip(events[1:],events[:-1]) if previous==0 and x==1]
+print('raw rising',rising)
+# TODO: 파형·falling edge·누적 Counter를 기록하세요.
+</code></pre></section><section class="notebook-cell">
+<h2 id="결과-기록자가-점검">결과 기록·자가 점검</h2>
+<!-- exercise-guidance:microprocessor/gpio/activity-1-record -->
+<p><strong>t [ms]:</strong></p>
+<p><strong>level:</strong></p>
+<p><strong>edge 종류:</strong></p>
+<p><strong>누적 rising count:</strong></p>
+<h3 id="확인할-점">확인할 점</h3>
+<ul>
+<li>초기 level을 전환으로 잘못 세지 않았는가?</li>
+<li>같은 level이 연속으로 읽혀도 새 edge로 세지 않는가? <!-- /exercise-guidance:microprocessor/gpio/activity-1-record --></li>
+</ul>
+</section><section class="notebook-cell">
+<h2 id="polling-간격의-영향">Polling 간격의 영향</h2>
+<!-- exercise-guidance:microprocessor/gpio/activity-2 -->
+<h3 id="시작-조건-1">시작 조건</h3>
+<p>같은 파형을 <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi mathvariant="normal">Δ</mi><mi>t</mi><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>1</mn><mo>,</mo><mn>10</mn><mo>,</mo><mn>20</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">\Delta t\in\{1,10,20\}</annotation></semantics></math></span> ms 간격으로 읽습니다. 원본 edge 기록은 바꾸지 않습니다.</p>
+<h3 id="진행-방법-1">진행 방법</h3>
+<ol type="1">
+<li>각 Polling 시점에서 직전 event의 level을 찾아 읽으세요.</li>
+<li>읽힌 표본에서 rising edge를 다시 세어 원 기록과 비교하세요.</li>
+<li>어떤 짧은 pulse가 사라졌는지 실제 구간을 지목하세요.</li>
+</ol>
+<h3 id="남길-결과-1">남길 결과</h3>
+<ul>
+<li>세 표본화 그림과 비교 표. <!-- /exercise-guidance:microprocessor/gpio/activity-2 --></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>def sample_level(t):
+    return next(level for ts,level in reversed(events) if ts&lt;=t)
+for dt in [1,10,20]:
+    times=np.arange(0,101,dt);levels=[sample_level(t) for t in times]
+    print(dt,len(times))
+# TODO: 샘플에서 전환을 세고 원 기록과 대조하세요.
+</code></pre></section><section class="notebook-cell">
+<h2 id="결과-기록자가-점검-1">결과 기록·자가 점검</h2>
+<!-- exercise-guidance:microprocessor/gpio/activity-2-record -->
+<p><strong>Polling 간격 [ms]:</strong></p>
+<p><strong>표본 수:</strong></p>
+<p><strong>검출 rising 수:</strong></p>
+<p><strong>놓친 구간:</strong></p>
+<h3 id="확인할-점-1">확인할 점</h3>
+<ul>
+<li>원 파형을 고정한 채 샘플 간격만 바꾸었는가?</li>
+<li>Event 시각과 Polling으로 발견한 시각을 구분했는가? <!-- /exercise-guidance:microprocessor/gpio/activity-2-record --></li>
+</ul>
+</section><section class="notebook-cell">
+<h2 id="접점-튐을-걸러내기">접점 튐을 걸러내기</h2>
+<!-- exercise-guidance:microprocessor/gpio/activity-3 -->
+<h3 id="시작-조건-2">시작 조건</h3>
+<p>rising edge 사이의 최소 허용 간격을 20 ms로 둡니다. 마지막으로 허용한 edge를 기준으로 판단합니다.</p>
+<h3 id="진행-방법-2">진행 방법</h3>
+<ol type="1">
+<li>raw rising 목록에서 20 ms 미만 간격의 후속 edge를 무시하세요.</li>
+<li>제한을 5,20,50 ms로 바꾸어 허용된 edge 수를 비교하세요.</li>
+<li><a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/microprocessor/gpio/Week6-1_GPIO_LED_Test.ipynb#copy=true" data-course-overlay="Colab 노트북 미리보기" data-document-version="3f3e86446418a914" href="Week6-1_GPIO_LED_Test.preview.html">Week6-1_GPIO_LED_Test.ipynb</a>의 <code>GPIO.setmode</code>와 <code>time.sleep</code> 인자를 읽고, 핀 번호 체계와 시간 단위를 이 활동의 기록과 연결해 설명하세요. 코드 읽기만으로 수행합니다.</li>
+</ol>
+<h3 id="남길-결과-2">남길 결과</h3>
+<ul>
+<li>세 조건의 표와 처리 규칙 3문장. <!-- /exercise-guidance:microprocessor/gpio/activity-3 --></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>def debounce(times,min_gap):
+    accepted=[]
+    for t in times:
+        if not accepted or t-accepted[-1]&gt;=min_gap:accepted.append(t)
+    return accepted
+print(debounce(rising,20))
+# TODO: 5·20·50 ms를 비교하세요.
+</code></pre></section><section class="notebook-cell">
+<h2 id="결과-기록자가-점검-2">결과 기록·자가 점검</h2>
+<!-- exercise-guidance:microprocessor/gpio/activity-3-record -->
+<p><strong>최소 간격 [ms]:</strong></p>
+<p><strong>raw count:</strong></p>
+<p><strong>허용 count:</strong></p>
+<p><strong>허용 시점 [ms]:</strong></p>
+<h3 id="확인할-점-2">확인할 점</h3>
+<ul>
+<li>버린 edge가 마지막 허용 시각을 갱신하지 않는가?</li>
+<li>BCM 번호와 보드의 물리 핀 번호를 구분했는가? <!-- /exercise-guidance:microprocessor/gpio/activity-3-record --></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

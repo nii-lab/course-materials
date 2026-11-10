@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Contents</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="621a7c111f95cf01972e3b368ee51a93707da4e827420cbcdd134eaf4b892388" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/arrays-and-plots/Week4-4_Python_Matplotlib.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/arrays-and-plots/Week4-4_Python_Matplotlib.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="Week4-4_Python_Matplotlib.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>Contents</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="Week4-4_Python_Matplotlib.ipynb" href="Week4-4_Python_Matplotlib.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/arrays-and-plots/Week4-4_Python_Matplotlib.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="목차"></span></p>
+<h1 id="contents">Contents</h1>
+<ul>
+<li><a href="#Matplotlib">Matplotlib</a>
+<ul>
+<li><a href="#1-그래프">1 Plotting</a></li>
+<li><a href="#2-연산">2 Multiple plots</a></li>
+<li><a href="#3-관련함수">3 Working with text</a></li>
+<li><a href="#4-실습">4 Practice</a></li>
+</ul></li>
+</ul>
+<p><span id="matplotlib"></span></p>
+<span id="Matplotlib"></span><h1 id="matplotlib">Matplotlib</h1>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt</code></pre></section><section class="notebook-cell">
+<p><span id="그래프"></span></p>
+<span id="1-그래프"></span><h3 id="1-plotting">1 Plotting</h3>
+<ul>
+<li>The plot function</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># For the points to plot,
+# store the x-coordinate and y-coordinate values in variables
+x = np.arange(0, 3 * np.pi, 0.1)
+y = np.sin(x)
+# Plot the points using the plot function
+plt.plot(x, y)
+# Display the plot on screen
+plt.show()</code></pre></section><section class="notebook-cell">
+<ul>
+<li>Display the title, legend, and axis labels</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>x = np.arange(0, 3 * np.pi, 0.1)
+y_sin = np.sin(x)
+y_cos = np.cos(x)
+# Initialize the plot
+plt.clf()
+plt.plot(x, y_sin)
+plt.plot(x, y_cos)
+# Display axis names
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+# Display the title
+plt.title('Sine and Cosine')
+# Display the legend - using a list
+# The list length must equal the number of plotted series
+plt.legend(['Sine', 'Cosine'])
+plt.show()
+</code></pre></section><section class="notebook-cell">
+<p><span id="다중-그래프"></span></p>
+<span id="2-연산"></span><h3 id="2-multiple-plots">2 Multiple plots</h3>
+<ul>
+<li>The subplot function</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>plt.clf()
+# Adjust spacing between plots
+left=0.0
+bottom=0.0
+right=1.0
+top=1.0
+wspace=1.0
+hspace=1.0
+plt.subplots_adjust(left, bottom, right, top, wspace, hspace)
+# Declare a layout with 2 rows and 1 column of plots
+# Create a plot in position 1
+plt.subplot(2,1,1)
+plt.plot(x,y_sin)
+plt.title('Sine')
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+# Create a plot in position 2
+plt.subplot(2,1,2)
+plt.plot(x,y_cos)
+plt.title('Cosine')
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+plt.show()</code></pre></section><section class="notebook-cell">
+<p><span id="텍스트-작업"></span></p>
+<span id="3-관련함수"></span><h3 id="3-working-with-text">3 Working with text</h3>
+<ul>
+<li>The text function</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>plt.clf()
+plt.plot(x, y_sin)
+plt.plot(x, y_cos)
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+plt.title('Sine and Cosine')
+plt.legend(['Sine', 'Cosine'])
+# text(a,b,s) : display text s at position a, b
+plt.text(4,0.5, 'here!')
+# Express an equation as text
+plt.text(6,0.5,r'$y=sin(x)$')
+plt.show()</code></pre></section><section class="notebook-cell">
+<ul>
+<li>The annotate function</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>plt.clf()
+plt.plot(x, y_sin)
+plt.plot(x, y_cos)
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+plt.title('Sine and Cosine')
+plt.legend(['Sine', 'Cosine'])
+plt.annotate('min', xy=(np.pi, -1), xytext=(5, -0.5), 
+             arrowprops=dict(facecolor='black', shrink=0.05),)
+plt.show()</code></pre></section><section class="notebook-cell">
+<p><span id="실습"></span></p>
+<span id="4-실습"></span><h3 id="4-practice">4 Practice</h3>
+<ul>
+<li>Draw 2x2 plots
+<ul>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">y=x</annotation></semantics></math></span></li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">y=x^2</annotation></semantics></math></span></li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>s</mi><mi>i</mi><mi>n</mi><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">y=sin(x)</annotation></semantics></math></span></li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>c</mi><mi>o</mi><mi>s</mi><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">y=cos(x)</annotation></semantics></math></span></li>
+</ul></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

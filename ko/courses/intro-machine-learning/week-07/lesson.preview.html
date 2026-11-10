@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Linear Regression · 학습</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/intro-machine-learning/week-07/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="lesson.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/intro-machine-learning/week-07/lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">머신러닝의 이해</a></header><main class="directory" id="main"><h1>Linear Regression · 학습</h1><nav class="notebook-actions"><a download="" href="lesson.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/intro-machine-learning/week-07/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="이번에-배울-내용">이번에 배울 내용</h2>
+<!-- exercise-guidance:intro-machine-learning/week-07/learning-intro -->
+<p>관측 범위를 벗어난 예측과 이상값이 회귀식에 미치는 영향을 확인합니다. <!-- /exercise-guidance:intro-machine-learning/week-07/learning-intro --></p>
+</section><section class="notebook-cell">
+<h2 id="관측과-예측식">관측과 예측식</h2>
+<!-- exercise-guidance:intro-machine-learning/week-07/learning-1 -->
+<p>최소제곱은 예측과 관측의 차이를 제곱해 합한 값을 줄입니다. 이상값의 영향이 커질 수 있어 직선만 보지 말고 잔차도 확인합니다. <!-- /exercise-guidance:intro-machine-learning/week-07/learning-1 --></p>
+</section><section class="notebook-cell">
+<h2 id="새-입력에서의-평가">새 입력에서의 평가</h2>
+<!-- exercise-guidance:intro-machine-learning/week-07/learning-2 -->
+<p>관측 범위 안의 예측과 범위 밖의 예측은 근거가 다릅니다. 실무에서는 자료를 먼저 나누고, 전처리와 모델은 학습 자료에서만 fit합니다. Pipeline은 이 순서를 묶는 데 도움이 됩니다. <!-- /exercise-guidance:intro-machine-learning/week-07/learning-2 --></p>
+</section><section class="notebook-cell">
+<h2 id="풀이-예제">풀이 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-07/learning-example -->
+<p><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>5</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">x=\begin{bmatrix}0&amp;1&amp;2&amp;3&amp;4&amp;5\end{bmatrix}</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3.2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4.8</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>7.1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>8.9</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>11.2</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">y=\begin{bmatrix}1&amp;3.2&amp;4.8&amp;7.1&amp;8.9&amp;11.2\end{bmatrix}</annotation></semantics></math></span>입니다. 모델은 y_hat=w*x+b입니다. <!-- /exercise-guidance:intro-machine-learning/week-07/learning-example --></p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+x=np.arange(6.);y=np.array([1,3.2,4.8,7.1,8.9,11.2]);X=np.c_[x,np.ones_like(x)]
+coef=np.linalg.lstsq(X,y,rcond=None)[0]
+print(coef)
+</code></pre><pre class="notebook-output">[2.01142857 1.0047619 ]
+</pre></section><section class="notebook-cell">
+<h2 id="참고-예제">참고 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-07/learning-references -->
+<details class="learning-references">
+<summary>
+추가 예제 보기
+</summary>
+<p>
+<a data-course-reference="" href="index.html">참고 자료</a>
+</p>
+</details>
+<!-- /exercise-guidance:intro-machine-learning/week-07/learning-references -->
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

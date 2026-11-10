@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Week8-2_DynamoDB_Local_Test_Local</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="1ccdc928d0f084bc79dd87f554b997d2f86672cb228ce30220ffa85b0e000f25" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/dynamodb/Week8-2_DynamoDB_Local_Test_Local.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/dynamodb/Week8-2_DynamoDB_Local_Test_Local.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="Week8-2_DynamoDB_Local_Test_Local.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>Week8-2_DynamoDB_Local_Test_Local</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="Week8-2_DynamoDB_Local_Test_Local.ipynb" href="Week8-2_DynamoDB_Local_Test_Local.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/dynamodb/Week8-2_DynamoDB_Local_Test_Local.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="table-생성"></span></p>
+<h3 id="create-a-table">Create a table</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import boto3
+def create_indices_table(dynamodb=None):
+	if not dynamodb:
+		dynamodb = boto3.resource('dynamodb',
+                          aws_access_key_id="anything",
+                          aws_secret_access_key="anything",
+                          region_name="us-west-2",
+                          endpoint_url="http://localhost:8000")
+		table_name = 'StockPrice'
+		table = dynamodb.Table(table_name)
+		try:
+			table.delete()
+		except dynamodb.meta.client.exceptions.ResourceNotFoundException:
+			pass
+
+		table = dynamodb.create_table(TableName=table_name,
+			KeySchema=[
+			{'AttributeName': 'StockName','KeyType': 'HASH' # Partition key
+			},
+			{'AttributeName': 'Date','KeyType': 'RANGE' # Sort key
+			}
+			],
+			AttributeDefinitions=[
+			{'AttributeName': 'StockName','AttributeType': 'S'},
+			{'AttributeName': 'Date','AttributeType': 'S'},
+			],
+			ProvisionedThroughput={'ReadCapacityUnits': 10, 'WriteCapacityUnits': 10}
+		)
+	return table
+if __name__ == '__main__':
+	indices_table = create_indices_table()
+	print("Table status:", indices_table.table_status)</code></pre></section><section class="notebook-cell">
+<p><span id="table-item-추가-쿼리-수정-삭제하기"></span></p>
+<h3 id="add-query-update-and-delete-table-items">Add, query, update, and delete table items</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import boto3
+from boto3.dynamodb.conditions import Key, Attr
+from decimal import Decimal
+
+def write_data(stockname, date, value, dynamodb):
+    table = dynamodb.Table('StockPrice')
+    item = {'StockName':stockname,
+            'Date':date,
+            'Value':Decimal(value)}
+    table.put_item(Item=item)
+    print('item', stockname, 'added!')
+    print('-------')
+
+def query_data_by_name(stockname, dynamodb):
+    table = dynamodb.Table('StockPrice')
+    response = table.query(
+        KeyConditionExpression =
+            Key('StockName').eq(stockname))
+    print('Querying items for', 'StockName =', stockname)
+    print(response['Items'])
+    print('-------')
+
+def query_data_by_date(stockname, date_from, date_to, dynamodb):
+    table = dynamodb.Table('StockPrice')
+    response = table.query(
+        KeyConditionExpression =
+            Key('StockName').eq(stockname)
+            &amp; Key('Date').between(date_from, date_to))
+    print('Querying items for', 'StockName =',
+          stockname, date_from, '~', date_to)
+    print(response['Items'])
+    print('-------')
+
+def update_data(stockname, date, new_value, dynamodb):
+    table = dynamodb.Table('StockPrice')
+    response = table.update_item(
+        Key={'StockName':stockname,'Date':date},
+        UpdateExpression='Set #V=:v',
+        ExpressionAttributeNames={
+            '#V':'Value'},
+        ExpressionAttributeValues={
+            ':v':Decimal(new_value)},
+        ReturnValues='UPDATED_NEW'
+    )
+    print('item', stockname, 'updated!')
+    print('-------')
+
+def remove_data(stockname, date, dynamodb):
+    table = dynamodb.Table('StockPrice')
+    response = table.delete_item(
+        Key={'StockName':stockname, 'Date':date}
+    )
+    print('item', stockname, 'deleted!')
+    print('-------')
+
+date = '2023-04-20'
+stockname = 'Samsung Electronics'
+value = 65300
+dynamodb = boto3.resource('dynamodb',
+                          aws_access_key_id="anything",
+                          aws_secret_access_key="anything",
+                          region_name="ap-northeast-2",
+                          endpoint_url="http://localhost:8000")
+
+write_data(stockname, date, value, dynamodb)
+query_data_by_name(stockname, dynamodb)
+query_data_by_date(stockname, '2023-04-19', '2023-04-21', dynamodb)
+query_data_by_date(stockname, '2023-04-21', '2023-04-23', dynamodb)
+update_data(stockname, date, 65400, dynamodb)
+query_data_by_name(stockname, dynamodb)
+remove_data(stockname, date, dynamodb)
+query_data_by_name(stockname, dynamodb)</code></pre><pre class="notebook-output">item Samsung Electronics added!
+-------
+Querying items for StockName = Samsung Electronics
+[{'Date': '2023-04-20', 'StockName': 'Samsung Electronics', 'Value': Decimal('65300')}]
+-------
+Querying items for StockName = Samsung Electronics 2023-04-19 ~ 2023-04-21
+[{'Date': '2023-04-20', 'StockName': 'Samsung Electronics', 'Value': Decimal('65300')}]
+-------
+Querying items for StockName = Samsung Electronics 2023-04-21 ~ 2023-04-23
+[]
+-------
+item Samsung Electronics updated!
+-------
+Querying items for StockName = Samsung Electronics
+[{'Date': '2023-04-20', 'StockName': 'Samsung Electronics', 'Value': Decimal('65400')}]
+-------
+item Samsung Electronics deleted!
+-------
+Querying items for StockName = Samsung Electronics
+[]
+-------
+item Samsung Electronics added!
+-------
+</pre></section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

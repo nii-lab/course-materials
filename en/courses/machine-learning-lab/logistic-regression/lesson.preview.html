@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Logistic Regression · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="b5f9e88e78606e6b9626b5dbd95f31bbbd89f9579b9158de6e2d32713d23f65a" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/machine-learning-lab/logistic-regression/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/machine-learning-lab/logistic-regression/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Machine Learning Lab</a></header><main class="directory" id="main"><h1>Logistic Regression · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/machine-learning-lab/logistic-regression/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="logistic-regression-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Distinguish the model that calculates probabilities from the criterion that triggers the final alarm to adjust the costs of misses and false alarms.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>Logit → Sigmoid probability → Threshold → Misses and false alarms</p>
+</section><section class="notebook-cell">
+<p><span id="점수확률판정"></span></p>
+<h2 id="score-probability-and-decision">Score, probability, and decision</h2>
+<p>Applying sigmoid to logit z gives p=1/(1+exp(−z)). Probability and the final decision are different. Lowering the threshold yields more positive predictions but can also increase false alarms.</p>
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mi>−</mi><mi>z</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">p=\frac{1}{1+e^{-z}}</annotation></semantics></math></span></p>
+</section><section class="notebook-cell">
+<p><span id="loss-function에-넣는-값"></span></p>
+<h2 id="values-passed-to-the-loss-function">Values passed to the loss function</h2>
+<p>Pass logits before Sigmoid to BCEWithLogitsLoss. Evaluate the training loss separately from the costs of misses and false alarms in deployment.</p>
+<p>Class 1 is positive. TP counts samples with actual 1 and predicted 1; FN, actual 1 and predicted 0; FP, actual 0 and predicted 1; TN, actual 0 and predicted 0.</p>
+<ul>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">y</mi></mrow><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><mo>+</mo><mi>T</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\mathrm{Accuracy}=\frac{TP+TN}{TP+FP+FN+TN}</annotation></semantics></math></span>: The fraction of all samples predicted correctly.</li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\mathrm{Precision}=\frac{TP}{TP+FP}</annotation></semantics></math></span>: The fraction of samples predicted as 1 that are actually 1.</li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\mathrm{Recall}=\frac{TP}{TP+FN}</annotation></semantics></math></span>: The fraction of actual 1 samples identified as 1.</li>
+</ul>
+<p>When a denominator is 0, record the display rule you used alongside the results.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>The inputs are the provided 12×2 synthetic features; samples whose two features sum to more than 1 belong to Class 1.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import torch
+from torch import nn
+X=torch.tensor([[-2.,-1.],[-1.,-2.],[-1.,0.],[0.,-1.],[1.,1.],[1.,2.],[2.,1.],[2.,2.],[-2.,1.],[1.,-2.],[0.,2.],[2.,0.]])
+y=(X.sum(dim=1)&gt;1).float().reshape(-1,1)
+def fit_binary(weights=None):
+    torch.manual_seed(7);m=nn.Linear(2,1);opt=torch.optim.SGD(m.parameters(),lr=.1);history=[]
+    for _ in range(200):
+        losses=nn.functional.binary_cross_entropy_with_logits(m(X),y,reduction='none')
+        loss=(losses if weights is None else losses*weights).mean()
+        opt.zero_grad();loss.backward();opt.step();history.append(loss.item())
+    return m,history
+model,history=fit_binary();prob=torch.sigmoid(model(X)).detach().reshape(-1).numpy();truth=y.numpy().reshape(-1).astype(int)
+print(prob)
+</code></pre><pre class="notebook-output">[0.00286324 0.00291552 0.09087328 0.09238355 0.95395184 0.9918115
+ 0.99195766 0.99861526 0.08938526 0.09391632 0.95314825 0.9547425 ]
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Compensator Design</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="087a81f92eb307d5b1c3f7b778def3430f384886a593352ecfd7f8ffea87d4c1" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/control-2/compensator-design/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/control-2/compensator-design/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Control Engineering II</a></header><main class="directory" id="main"><h1>Compensator Design</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/control-2/compensator-design/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<p><span id="실행-준비"></span></p>
+<h2 id="execution-setup">Execution setup</h2>
+<p>The Python option uses python-control. If the module is missing, run <code>%pip install control==0.10.2</code> in a Colab or Jupyter code cell.</p>
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>Decide whether to adjust lead or lag compensation when speed, damping, and steady-state error must be met together.</p>
+</section><section class="notebook-cell">
+<p><span id="기준-plant와-lead-설계점"></span></p>
+<h2 id="baseline-plant-and-lead-design-point">Baseline plant and lead design point</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>G</mi><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mfrac><mn>40</mn><mrow><mi>s</mi><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo>+</mo><mn>2</mn><mo form="postfix" stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">G(s)=\frac{40}{s(s+2)}</annotation></semantics></math></span>. Targets: <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ζ</mi><mo>=</mo><mn>.4</mn></mrow><annotation encoding="application/x-tex">\zeta=.4</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>ω</mi><mi>n</mi></msub><mo>=</mo><mn>10</mn></mrow><annotation encoding="application/x-tex">\omega_n=10</annotation></semantics></math></span> rad/s.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Calculate the real and imaginary parts of the target complex poles and mark them on the root locus.</li>
+<li>Choose the lead compensator's zero and pole, calculate its gain using the angle and magnitude conditions at the target point, and write the compensator expression.</li>
+<li>Calculate the distance between the selected point and the actual closed-loop pole.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>The target point, root-locus plots before and after compensation, and 1 compensator expression.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import control as ctl
+s = ctl.tf('s')
+G=40/(s*(s+2));zeta=.4;wn=10.
+p_desired=-zeta*wn+1j*wn*np.sqrt(1-zeta*zeta)
+print('desired pole',p_desired)
+# TODO: Apply the angle condition and gain selection from the original.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Design item:</strong></p>
+<p><strong>Target value:</strong></p>
+<p><strong>Calculated or selected value:</strong></p>
+<p><strong>Difference:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Did you distinguish pole and zero coordinate signs from compensator coefficient signs?</li>
+<li>Did you record the approximation error of the gain selected by grid search?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="설계-목적을-지표로-확인"></span></p>
+<h2 id="checking-design-objectives-with-metrics">Checking design objectives with metrics</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Apply a unit step and unit ramp to baseline G and the compensated model from Activity 1. Use 0~5 s and 0~20 s, respectively.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Apply the same unit step and unit ramp to the compensator from Activity 1 and the uncompensated model. Use 0–5 s for the step and 0–20 s for the ramp.</li>
+<li>Find step overshoot and settling time. For the ramp, plot <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>e</mi><mo form="prefix" stretchy="false">(</mo><mi>t</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>r</mi><mo form="prefix" stretchy="false">(</mo><mi>t</mi><mo form="postfix" stretchy="false">)</mo><mo>−</mo><mi>y</mi><mo form="prefix" stretchy="false">(</mo><mi>t</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">e(t)=r(t)-y(t)</annotation></semantics></math></span>, obtained by subtracting the output from <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>r</mi><mo form="prefix" stretchy="false">(</mo><mi>t</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>t</mi></mrow><annotation encoding="application/x-tex">r(t)=t</annotation></semantics></math></span>. Record the final-sample error for each model.</li>
+<li>Find <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>v</mi></msub><mo>=</mo><msub><mrow><mi mathvariant="normal">lim</mi><mo>⁡</mo></mrow><mrow><mi>s</mi><mo>→</mo><mn>0</mn></mrow></msub><mi>s</mi><mi>L</mi><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">K_v=\lim_{s\to0}sL(s)</annotation></semantics></math></span> from the loop transfer function to calculate <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>1</mn><mi>/</mi><msub><mi>K</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex">1/K_v</annotation></semantics></math></span>, and record its absolute difference from the final ramp error above. Using the table values, explain which aspects of response speed and final error improved or worsened after compensation.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>1 step plot, a ramp plot, and a performance table.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import control as ctl
+s = ctl.tf('s')
+G=40/(s*(s+2))
+t=np.linspace(0,20,4001);r=t.copy()
+# TODO: Insert C from Activity 1 and calculate the ramp response of feedback(C*G,1).
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>Model:</strong></p>
+<p><strong>Overshoot [%]:</strong></p>
+<p><strong>Settling Time [s]:</strong></p>
+<p><strong>Kv:</strong></p>
+<p><strong>Late ramp error:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Did you use an interval where the ramp error had become sufficiently constant?</li>
+<li>Did you compare the compensated and uncompensated systems using the same inputs and metrics?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="다른-목표로-설계-반복"></span></p>
+<h2 id="repeating-the-design-for-a-different-target">Repeating the design for a different target</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>For the same G, change the target to (ζ,ωn)=(.5,8), or follow the procedure in the first ‘Phase-lag compensator using root locus’ section of <a data-colab-url="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/control-2/compensator-design/W12_CompensatorDesign.ipynb#copy=true" data-course-overlay="Preview Colab notebook" data-document-version="0e2f19b5d40d8763" href="W12_CompensatorDesign.preview.html#phase-lag-compensator-using-root-locus">W12_CompensatorDesign.ipynb</a> (conditions <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>v</mi></msub><mo>&gt;</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">K_v&gt;20</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>ζ</mi><mo>=</mo><mn>0.4</mn></mrow><annotation encoding="application/x-tex">\zeta=0.4</annotation></semantics></math></span>, starting code <code>Kv_desired=20</code>) to target <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>K</mi><mi>v</mi></msub><mo>=</mo><mn>20</mn></mrow><annotation encoding="application/x-tex">K_v=20</annotation></semantics></math></span>. Choose either option.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>First state the changed target and the fixed plant.</li>
+<li>Create a new compensator and performance table in the same format.</li>
+<li>Summarize the metrics achieved and those sacrificed in no more than 5 sentences.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>A comparison table of 2 designs and result plots.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import control as ctl
+s = ctl.tf('s')
+G=40/(s*(s+2))
+# TODO: Define the selected new target as variables and repeat the design.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>Design:</strong></p>
+<p><strong>Objective:</strong></p>
+<p><strong>Compensator expression:</strong></p>
+<p><strong>Achieved value:</strong></p>
+<p><strong>Metrics that changed together:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you avoid reusing the old compensator as your result after changing the target?</li>
+<li>Did you also record unmet targets with their actual values?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

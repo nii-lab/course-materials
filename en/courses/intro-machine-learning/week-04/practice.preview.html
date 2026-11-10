@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Control Flow and Functions</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="863710b26afc5f3672b20ce7a57fa7dd1ecbdd9c5ba35c16053267051b859df4" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-04/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-04/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Control Flow and Functions</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-04/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="제어문과-함수"></span></p>
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>A single boundary value changes the decision. Turn a conditional into a function and compare ordinary and boundary inputs.</p>
+</section><section class="notebook-cell">
+<p><span id="조건과-반복"></span></p>
+<h2 id="conditions-and-loops">Conditions and loops</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p>Scores=[45,60,75,90], and the passing criterion is 60 or higher.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Use for and if to determine whether each score passes.</li>
+<li>Implement the same process as pass_flags(scores,threshold) and compare the two results.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>A 4-row table and a reusable function.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>scores=[45,60,75,90]
+def pass_flags(values,threshold=60):
+    return [v&gt;=threshold for v in values]
+print(pass_flags(scores))
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Score:</strong></p>
+<p><strong>Loop result:</strong></p>
+<p><strong>Function result:</strong></p>
+<p><strong>Match:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Did you actually test the boundary value 60?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="기준값-변화"></span></p>
+<h2 id="changing-the-threshold">Changing the Threshold</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Compare passing-student counts and boundary samples at <code>threshold=50</code>,60,80.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Call <code>pass_flags</code> with each Threshold in <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>50</mn><mo>,</mo><mn>60</mn><mo>,</mo><mn>80</mn></mrow><annotation encoding="application/x-tex">50,60,80</annotation></semantics></math></span>. Keep the four scores unchanged.</li>
+<li>Tabulate the four pass/fail decisions and the passing-student count for each Threshold. Check whether the comparison operator used when a sample's score equals the Threshold is <code>&gt;=</code>.</li>
+<li>Identify scores whose decisions changed with the Threshold and explain why.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>A table of decisions and passing-student counts by Threshold.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>thresholds=[50,60,80]
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>Threshold:</strong></p>
+<p><strong>Decisions for the four scores:</strong></p>
+<p><strong>Number of students who pass:</strong></p>
+<p><strong>Scores whose decisions changed:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Did you record the decision for a value equal to the cutoff score?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="다른-입력에서도-확인하기"></span></p>
+<h2 id="checking-other-inputs">Checking Other Inputs</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Check the function's boundary values using scores [59,60,61] and an empty List.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>Keep Threshold 60 and write the expected function return values for scores <code>[59,60,61]</code> and an empty List before running.</li>
+<li>Call <code>pass_flags</code> on both inputs and record expected and actual return values side by side. Explain the decision for score 60 and the form of the return value for an empty input.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>Expected and actual return values for both inputs, and an explanation of the boundary value.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Use the preceding activity's data and functions to check the specified new examples.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>Input scores:</strong></p>
+<p><strong>Prediction before running:</strong></p>
+<p><strong>Actual return value:</strong></p>
+<p><strong>Boundary value and empty input handling:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you run the same function on an empty input too?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

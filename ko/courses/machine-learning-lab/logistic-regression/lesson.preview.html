@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Logistic Regression · 학습</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/machine-learning-lab/logistic-regression/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="lesson.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/machine-learning-lab/logistic-regression/lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">전기공학머신러닝실습</a></header><main class="directory" id="main"><h1>Logistic Regression · 학습</h1><nav class="notebook-actions"><a download="" href="lesson.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/machine-learning-lab/logistic-regression/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="이번에-배울-내용">이번에 배울 내용</h2>
+<!-- exercise-guidance:machine-learning-lab/logistic-regression/learning-intro -->
+<p>확률을 계산하는 모델과 최종 경보를 내리는 기준을 구분해야, 놓침과 오경보의 비용을 조절할 수 있습니다. <!-- /exercise-guidance:machine-learning-lab/logistic-regression/learning-intro --></p>
+</section><section class="notebook-cell">
+<h2 id="전체-흐름">전체 흐름</h2>
+<!-- exercise-guidance:machine-learning-lab/logistic-regression/learning-flow -->
+<p>Logit → Sigmoid 확률 → Threshold → 놓침·오경보 <!-- /exercise-guidance:machine-learning-lab/logistic-regression/learning-flow --></p>
+</section><section class="notebook-cell">
+<h2 id="점수확률판정">점수·확률·판정</h2>
+<!-- exercise-guidance:machine-learning-lab/logistic-regression/learning-1 -->
+<p>Logit z를 Sigmoid에 넣으면 p=1/(1+exp(−z))입니다. 확률과 최종 판정은 다릅니다. Threshold를 낮추면 더 많은 양성 예측을 얻지만 오경보도 늘 수 있습니다.</p>
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>p</mi><mo>=</mo><mfrac><mn>1</mn><mrow><mn>1</mn><mo>+</mo><msup><mi>e</mi><mrow><mi>−</mi><mi>z</mi></mrow></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex">p=\frac{1}{1+e^{-z}}</annotation></semantics></math></span> <!-- /exercise-guidance:machine-learning-lab/logistic-regression/learning-1 --></p>
+</section><section class="notebook-cell">
+<h2 id="loss-function에-넣는-값">Loss Function에 넣는 값</h2>
+<!-- exercise-guidance:machine-learning-lab/logistic-regression/learning-2 -->
+<p>BCEWithLogitsLoss에는 Sigmoid를 거치기 전의 Logit을 넣습니다. 학습에서 사용하는 Loss와 현장에서 사용하는 놓침·오경보 비용을 구분해 평가합니다.</p>
+<p>Positive는 Class 1입니다. TP는 실제 1·예측 1, FN은 실제 1·예측 0, FP는 실제 0·예측 1, TN은 실제 0·예측 0인 표본 수입니다.</p>
+<ul>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">A</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">u</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">y</mi></mrow><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>T</mi><mi>N</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi><mo>+</mo><mi>T</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\mathrm{Accuracy}=\frac{TP+TN}{TP+FP+FN+TN}</annotation></semantics></math></span>: 전체 표본 중 맞힌 비율.</li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">P</mi><mi mathvariant="normal">r</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">s</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">n</mi></mrow><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>P</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\mathrm{Precision}=\frac{TP}{TP+FP}</annotation></semantics></math></span>: 1로 예측한 표본 중 실제 1의 비율.</li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">R</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">c</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">l</mi><mi mathvariant="normal">l</mi></mrow><mo>=</mo><mfrac><mrow><mi>T</mi><mi>P</mi></mrow><mrow><mi>T</mi><mi>P</mi><mo>+</mo><mi>F</mi><mi>N</mi></mrow></mfrac></mrow><annotation encoding="application/x-tex">\mathrm{Recall}=\frac{TP}{TP+FN}</annotation></semantics></math></span>: 실제 1인 표본 중 1로 찾은 비율.</li>
+</ul>
+<p>분모가 0인 경우에는 사용한 표시 규칙을 결과와 함께 적습니다. <!-- /exercise-guidance:machine-learning-lab/logistic-regression/learning-2 --></p>
+</section><section class="notebook-cell">
+<h2 id="풀이-예제">풀이 예제</h2>
+<!-- exercise-guidance:machine-learning-lab/logistic-regression/learning-example -->
+<p>입력은 제공한 12×2 합성 특징이며, 두 특징 합이 1을 넘는 표본이 Class 1입니다. <!-- /exercise-guidance:machine-learning-lab/logistic-regression/learning-example --></p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import torch
+from torch import nn
+X=torch.tensor([[-2.,-1.],[-1.,-2.],[-1.,0.],[0.,-1.],[1.,1.],[1.,2.],[2.,1.],[2.,2.],[-2.,1.],[1.,-2.],[0.,2.],[2.,0.]])
+y=(X.sum(dim=1)&gt;1).float().reshape(-1,1)
+def fit_binary(weights=None):
+    torch.manual_seed(7);m=nn.Linear(2,1);opt=torch.optim.SGD(m.parameters(),lr=.1);history=[]
+    for _ in range(200):
+        losses=nn.functional.binary_cross_entropy_with_logits(m(X),y,reduction='none')
+        loss=(losses if weights is None else losses*weights).mean()
+        opt.zero_grad();loss.backward();opt.step();history.append(loss.item())
+    return m,history
+model,history=fit_binary();prob=torch.sigmoid(model(X)).detach().reshape(-1).numpy();truth=y.numpy().reshape(-1).astype(int)
+print(prob)
+</code></pre><pre class="notebook-output">[0.00286324 0.00291552 0.09087328 0.09238355 0.95395184 0.9918115
+ 0.99195766 0.99861526 0.08938526 0.09391632 0.95314825 0.9547425 ]
+</pre></section><section class="notebook-cell">
+<h2 id="참고-예제">참고 예제</h2>
+<!-- exercise-guidance:machine-learning-lab/logistic-regression/learning-references -->
+<details class="learning-references">
+<summary>
+추가 예제 보기
+</summary>
+<p>
+<a data-course-reference="" href="index.html">참고 자료</a>
+</p>
+</details>
+<!-- /exercise-guidance:machine-learning-lab/logistic-regression/learning-references -->
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

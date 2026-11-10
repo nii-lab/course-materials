@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>제어문과 함수 · 학습</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/intro-machine-learning/week-04/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="lesson.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/intro-machine-learning/week-04/lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">머신러닝의 이해</a></header><main class="directory" id="main"><h1>제어문과 함수 · 학습</h1><nav class="notebook-actions"><a download="" href="lesson.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/intro-machine-learning/week-04/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="이번에-배울-내용">이번에 배울 내용</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/learning-intro -->
+<p>경계값 하나에서 판단이 달라집니다. 조건문을 함수로 만들고 정상·경계 입력을 대조합니다. <!-- /exercise-guidance:intro-machine-learning/week-04/learning-intro --></p>
+</section><section class="notebook-cell">
+<h2 id="조건의-경계를-먼저-정하기">조건의 경계를 먼저 정하기</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/learning-1 -->
+<p>score&gt;60과 score≥60은 60에서 다른 결과입니다. 경계 바로 아래·같은 값·바로 위를 시험하면 비교 규칙을 확인할 수 있습니다. <!-- /exercise-guidance:intro-machine-learning/week-04/learning-1 --></p>
+</section><section class="notebook-cell">
+<h2 id="함수로-재사용하기">함수로 재사용하기</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/learning-2 -->
+<p>같은 판정을 여러 표본에 적용할 때 입력·Threshold·출력을 함수의 계약으로 정합니다. 빈 자료와 숫자가 아닌 입력은 정상 점수와 구분해 처리합니다. <!-- /exercise-guidance:intro-machine-learning/week-04/learning-2 --></p>
+</section><section class="notebook-cell">
+<h2 id="풀이-예제">풀이 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/learning-example -->
+<p>점수=[45,60,75,90]이고 합격 기준은 60 이상입니다. <!-- /exercise-guidance:intro-machine-learning/week-04/learning-example --></p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>scores=[45,60,75,90]
+def pass_flags(values,threshold=60):
+    return [v&gt;=threshold for v in values]
+print(pass_flags(scores))
+</code></pre><pre class="notebook-output">[False, True, True, True]
+</pre></section><section class="notebook-cell">
+<h2 id="참고-예제">참고 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-04/learning-references -->
+<details class="learning-references">
+<summary>
+추가 예제 보기
+</summary>
+<p>
+<a data-course-reference="" href="index.html">참고 자료</a>
+</p>
+</details>
+<!-- /exercise-guidance:intro-machine-learning/week-04/learning-references -->
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

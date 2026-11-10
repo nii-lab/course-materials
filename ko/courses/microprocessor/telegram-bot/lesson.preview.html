@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>장치 명령 처리와 메시지 연동 · 학습</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/microprocessor/telegram-bot/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="lesson.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/microprocessor/telegram-bot/lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">마이크로프로세서응용설계</a></header><main class="directory" id="main"><h1>장치 명령 처리와 메시지 연동 · 학습</h1><nav class="notebook-actions"><a download="" href="lesson.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/microprocessor/telegram-bot/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="실행-조건">실행 조건</h2>
+<!-- exercise-guidance:microprocessor/telegram-bot/execution -->
+<p>기본 활동은 Python만 사용합니다. 실제 메신저·MQTT 연결은 처리 규칙을 확인한 뒤 선택합니다. <!-- /exercise-guidance:microprocessor/telegram-bot/execution --></p>
+</section><section class="notebook-cell">
+<h2 id="이번에-배울-내용">이번에 배울 내용</h2>
+<!-- exercise-guidance:microprocessor/telegram-bot/learning-intro -->
+<p>메신저·웹·장치 버스가 달라도 같은 명령 처리 규칙을 재사용할 수 있도록 입력·상태·응답을 나눕니다. <!-- /exercise-guidance:microprocessor/telegram-bot/learning-intro --></p>
+</section><section class="notebook-cell">
+<h2 id="전체-흐름">전체 흐름</h2>
+<!-- exercise-guidance:microprocessor/telegram-bot/learning-flow -->
+<p>외부 메시지 → 공통 명령 → 검증·중복 제거 → 상태·응답 <!-- /exercise-guidance:microprocessor/telegram-bot/learning-flow --></p>
+</section><section class="notebook-cell">
+<h2 id="메시지와-장치-동작-분리">메시지와 장치 동작 분리</h2>
+<!-- exercise-guidance:microprocessor/telegram-bot/learning-1 -->
+<p>같은 on 명령은 웹·메신저·장치 버스로 들어올 수 있습니다. 전송 형식을 공통 요청 {request_id,device,command}로 바꾼 뒤 한 처리 함수에 전달합니다. <!-- /exercise-guidance:microprocessor/telegram-bot/learning-1 --></p>
+</section><section class="notebook-cell">
+<h2 id="중복과-잘못된-명령">중복과 잘못된 명령</h2>
+<!-- exercise-guidance:microprocessor/telegram-bot/learning-2 -->
+<p>on처럼 목표 상태를 지정하는 명령과 toggle처럼 현재 상태를 바꾸는 명령은 재전송의 영향이 다릅니다. 요청 ID·장치·명령을 검증한 뒤 중복을 처리하고, 응답과 실제 상태를 함께 남깁니다. <!-- /exercise-guidance:microprocessor/telegram-bot/learning-2 --></p>
+</section><section class="notebook-cell">
+<h2 id="풀이-예제">풀이 예제</h2>
+<!-- exercise-guidance:microprocessor/telegram-bot/learning-example -->
+<p>입력은 /start, /led on, /led off, /led invalid, /unknown입니다. 초기 LED 상태는 off입니다. <!-- /exercise-guidance:microprocessor/telegram-bot/learning-example --></p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>def handle(text,state):
+    if text=='/start':return state,'Commands: /led on, /led off'
+    if text=='/led on':return True,'LED on'
+    if text=='/led off':return False,'LED off'
+    return state,'Usage: /led on | /led off'
+state=False
+for text in ['/start','/led on','/led off','/led invalid','/unknown']:
+    next_state,reply=handle(text,state);print(text,state,next_state,reply);state=next_state
+</code></pre><pre class="notebook-output">/start False False Commands: /led on, /led off
+/led on False True LED on
+/led off True False LED off
+/led invalid False False Usage: /led on | /led off
+/unknown False False Usage: /led on | /led off
+</pre></section><section class="notebook-cell">
+<h2 id="참고-예제">참고 예제</h2>
+<!-- exercise-guidance:microprocessor/telegram-bot/learning-references -->
+<details class="learning-references">
+<summary>
+추가 예제 보기
+</summary>
+<p>
+<a data-course-reference="" href="index.html">참고 자료</a>
+</p>
+</details>
+<!-- /exercise-guidance:microprocessor/telegram-bot/learning-references -->
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

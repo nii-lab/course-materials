@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>L01_Colab_Tutorial</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/ai-applications/notebook-literacy/L01_Colab_Tutorial.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="L01_Colab_Tutorial.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/ai-applications/notebook-literacy/L01_Colab_Tutorial.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">인공지능응용</a></header><main class="directory" id="main"><h1>L01_Colab_Tutorial</h1><nav class="notebook-actions"><a download="" href="L01_Colab_Tutorial.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/ai-applications/notebook-literacy/L01_Colab_Tutorial.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell"><h3 id="플랫폼os-확인">플랫폼(OS) 확인</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import platform
+platform.platform()</code></pre></section><section class="notebook-cell">
+<h3 id="하드웨어-사양-확인">하드웨어 사양 확인</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>!cat /proc/cpuinfo</code></pre></section><section class="notebook-cell"><pre class="notebook-code"><code>!cat /proc/meminfo</code></pre></section><section class="notebook-cell"><pre class="notebook-code"><code>!df -h</code></pre></section><section class="notebook-cell">
+<h3 id="python-버전-확인">Python 버전 확인</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>!python --version</code></pre></section><section class="notebook-cell">
+<h3 id="런타임-유형-변경">런타임 유형 변경</h3>
+</section><section class="notebook-cell">
+<h3 id="gpu-확인">GPU 확인</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>!nvidia-smi</code></pre></section><section class="notebook-cell">
+<h3 id="colab-drive-mount">Colab-Drive Mount</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from google.colab import drive
+drive.mount('/content/drive')</code></pre></section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

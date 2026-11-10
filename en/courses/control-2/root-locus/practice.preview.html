@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Root Locus</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="e42669e2e8a9412bb578a257af0d7c07900ec2b68d5821569c2e1fd836516dbf" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/control-2/root-locus/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/control-2/root-locus/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Control Engineering II</a></header><main class="directory" id="main"><h1>Root Locus</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/control-2/root-locus/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<p><span id="실행-준비"></span></p>
+<h2 id="execution-setup">Execution setup</h2>
+<p>The Python option uses python-control. If the module is missing, run <code>%pip install control==0.10.2</code> in a Colab or Jupyter code cell.</p>
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>Examine how choosing a gain relates to pole locations and the time response.</p>
+</section><section class="notebook-cell">
+<p><span id="gain과-closed-loop-pole"></span></p>
+<h2 id="gain-and-closed-loop-poles">Gain and closed-loop poles</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>s</mi><mo>+</mo><mn>7</mn></mrow><mrow><mi>s</mi><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo>+</mo><mn>5</mn><mo form="postfix" stretchy="false">)</mo><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo>+</mo><mn>15</mn><mo form="postfix" stretchy="false">)</mo><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo>+</mo><mn>20</mn><mo form="postfix" stretchy="false">)</mo></mrow></mfrac></mrow><annotation encoding="application/x-tex">L(s)=\frac{s+7}{s(s+5)(s+15)(s+20)}</annotation></semantics></math></span>. Use <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>100</mn><mo>,</mo><mn>500</mn><mo>,</mo><mn>1000</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">K\in\{100,500,1000\}</annotation></semantics></math></span>.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Plot the root locus and mark the poles of <code>feedback(K*L,1)</code> for each K using distinct symbols.</li>
+<li>Tabulate the real parts of the poles and stability for each case.</li>
+<li>Predict pole movements and response changes relative to the baseline condition <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>=</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">K=500</annotation></semantics></math></span>.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>1 root-locus plot and a pole table for each K.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import control as ctl
+s = ctl.tf('s')
+L=(s+7)/(s*(s+5)*(s+15)*(s+20))
+ctl.root_locus_plot(L)
+for k in [100,500,1000]: print(k,ctl.poles(ctl.feedback(k*L,1)))
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>K:</strong></p>
+<p><strong>Closed-loop Pole:</strong></p>
+<p><strong>Maximum real part:</strong></p>
+<p><strong>Stability:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Do the root-locus points match the directly calculated closed-loop poles?</li>
+<li>Are complex roots still conjugate pairs?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="time-response로-예상-확인"></span></p>
+<h2 id="testing-predictions-with-time-responses">Testing predictions with time responses</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Apply a unit step over <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0</mn><mo>≤</mo><mi>t</mi><mo>≤</mo><mn>8</mn></mrow><annotation encoding="application/x-tex">0\le t\le 8</annotation></semantics></math></span> s to the same model and gain.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Calculate overshoot and settling time only for stable cases.</li>
+<li>Explain the relationship between the slowest pole pair and oscillation and decay in the time response.</li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>=</mo><mn>500</mn></mrow><annotation encoding="application/x-tex">K=500</annotation></semantics></math></span>: add one value above or below this and test your prediction.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>A response plot and performance table including all 4 conditions.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import control as ctl
+s = ctl.tf('s')
+L=(s+7)/(s*(s+5)*(s+15)*(s+20))
+t=np.linspace(0,8,1601)
+T=ctl.feedback(500*L,1)
+t,y=ctl.step_response(T,t)
+plt.plot(t,y);plt.xlabel('Time [s]');plt.grid()
+# TODO: Add the remaining gains.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>K:</strong></p>
+<p><strong>Overshoot [%]:</strong></p>
+<p><strong>Settling Time [s]:</strong></p>
+<p><strong>Agreement with predictions:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Did you avoid forcing convergence metrics for unstable cases?</li>
+<li>Did you distinguish predictions based on poles from actual observations?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="다른-모델에-같은-절차-적용"></span></p>
+<h2 id="applying-the-same-procedure-to-other-models">Applying the same procedure to other models</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Use <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>L</mi><mn>2</mn></msub><mo form="prefix" stretchy="false">(</mo><mi>s</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mfrac><mrow><mi>s</mi><mo>+</mo><mn>2</mn></mrow><mrow><msup><mi>s</mi><mn>2</mn></msup><mo>+</mo><mn>2</mn><mi>s</mi><mo>+</mo><mn>3</mn></mrow></mfrac></mrow><annotation encoding="application/x-tex">L_2(s)=\frac{s+2}{s^2+2s+3}</annotation></semantics></math></span> and <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>K</mi><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>.5</mn><mo>,</mo><mn>2</mn><mo>,</mo><mn>10</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">K\in\{.5,2,10\}</annotation></semantics></math></span>.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>Create a root-locus plot, pole table, and step plot for L2 in the same format.</li>
+<li>Determine whether gain changes produce the same pattern in the higher-order model L and in L2.</li>
+<li>Explain whether conclusions from one model can be applied directly to another.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>A comparison summary table for both models and a brief interpretation.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import control as ctl
+s = ctl.tf('s')
+L2=(s+2)/(s*s+2*s+3)
+for k in [.5,2,10]:print(k,ctl.poles(ctl.feedback(k*L2,1)))
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>Model:</strong></p>
+<p><strong>K:</strong></p>
+<p><strong>Pole:</strong></p>
+<p><strong>Overshoot [%]:</strong></p>
+<p><strong>Settling Time [s]:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you reconstruct the closed-loop expression for each model?</li>
+<li>Did you avoid treating equal gain values as evidence of equal performance in the two systems?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Tensor Operations · Learning Materials</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="229fb02271f3dc84ff572519817fc6fbe7f56c0514fc893e267bbbd2b97dfe59" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/machine-learning-lab/tensor-manipulation/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/machine-learning-lab/tensor-manipulation/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Machine Learning Lab</a></header><main class="directory" id="main"><h1>Tensor Operations · Learning Materials</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/machine-learning-lab/tensor-manipulation/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="tensor-연산-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>A matching shape does not guarantee the intended operation. Relate axes, matrix multiplication, and broadcasting to the meaning of the output.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>Tensor axes and shapes → Concatenation and matrix multiplication → reshape and broadcasting</p>
+</section><section class="notebook-cell">
+<p><span id="batch와-특징의-축"></span></p>
+<h2 id="batch-and-feature-axes">Batch and feature axes</h2>
+<p>With three samples and four features, the shape is (3,4). cat concatenates along an existing axis, while stack creates a new axis. Track the meaning of samples and features as axes are added or removed.</p>
+</section><section class="notebook-cell">
+<p><span id="계산-가능과-올바른-계산"></span></p>
+<h2 id="a-valid-operation-versus-a-correct-calculation">A valid operation versus a correct calculation</h2>
+<p>Broadcasting expands arrays of different sizes for operations, but it can also act along unintended axes. Writing the expected shape before multiplication and checking the results with a small numerical example helps reveal silent errors.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>X=arange(12).reshape(3,4), where rows are samples and columns are features.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import torch
+X=torch.arange(12,dtype=torch.float32).reshape(3,4)
+print(X,X.shape,torch.cat([X,X],dim=0).shape)
+</code></pre><pre class="notebook-output">tensor([[ 0.,  1.,  2.,  3.],
+        [ 4.,  5.,  6.,  7.],
+        [ 8.,  9., 10., 11.]]) torch.Size([3, 4]) torch.Size([6, 4])
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

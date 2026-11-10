@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Sim-to-Real: Model Uncertainty and Action Delay · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="f0b429bc87ebc6783631200f4e8fea0d26b5773004a05e62e69b49e1473b6e23" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/reinforcement-learning/week-08/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/reinforcement-learning/week-08/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Reinforcement Learning for Electrical Engineering</a></header><main class="directory" id="main"><h1>Sim-to-Real: Model Uncertainty and Action Delay · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/reinforcement-learning/week-08/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="sim-to-real-model-uncertainty와-action-delay-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<ul>
+<li>Required packages: gymnasium, stable-baselines3, and PyTorch.</li>
+<li>SB3 policy: <code>MlpPolicy</code>.</li>
+<li>Gymnasium <code>step</code>: 5 return values.</li>
+<li>Public environment visualization: Add <code>gymnasium[classic-control]</code>.</li>
+</ul>
+<p>If the required package is missing, run <code>%pip install control==0.10.2 gymnasium==1.3.0 stable-baselines3==2.9.2</code> in a Colab or Jupyter code cell.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Even a policy that works well in a simulator can fail when physical parameters and delays differ. Quantify these differences before transferring to real hardware.</p>
+</section><section class="notebook-cell">
+<p><span id="reality-gap"></span></p>
+<h2 id="reality-gap">Reality gap</h2>
+<p>Differences in physical parameters, sensor noise, action delay, and normalization can change a simulator policy's behavior on real devices. Vary one factor at a time to identify vulnerabilities.</p>
+</section><section class="notebook-cell">
+<p><span id="식별과-randomization"></span></p>
+<h2 id="identification-and-randomization">Identification and randomization</h2>
+<p>System identification estimates a model from observations; domain randomization trains across a range of possible variations. Design the evaluation range separately from the training range.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>Use the baseline motor model and P control. Compare reference angular velocities of 0.5, 1, and 1.5.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>"""Synthetic motor; not a hardware interface. dt=0.1 s, scalar speed and bounded input."""
+import numpy as np
+class Motor:
+    def reset(self, seed=0, reference=1., noise=.01):
+        self.rng = np.random.default_rng(seed)
+        self.omega, self.t = 0., 0
+        self.reference, self.noise = reference, noise
+        return np.array([self.omega / 5, reference / 2], dtype=np.float32)
+    def step(self, action):
+        u = 2 * float(np.clip(np.asarray(action).item(), -1, 1))
+        self.omega += .1 * (-.4 * self.omega + .8 * u + self.rng.uniform(-self.noise, self.noise))
+        self.t += 1; error = self.reference - self.omega
+        reward = -(error**2 + .05 * u**2)
+        return np.array([self.omega / 5, self.reference / 2], dtype=np.float32), reward, abs(self.omega) &gt; 5, self.t &gt;= 100, {'error': error, 'u': u}
+
+def motor_evaluate(policy, references=(.5, 1., 1.5)):
+    rows=[]
+    for reference in references:
+        env=Motor(); obs=env.reset(100, reference)
+        errors=[]; inputs=[]; total=0.
+        while True:
+            obs,r,terminated,truncated,info=env.step(policy(obs))
+            errors.append(info['error']);inputs.append(info['u']);total+=r
+            if terminated or truncated:break
+        rows.append([reference, np.sqrt(np.mean(np.square(errors))),np.mean(np.square(inputs)),int(terminated),total])
+    return np.array(rows)
+
+def proportional(obs):return np.clip((2 * obs[1] - 5 * obs[0]), -1, 1)
+print('reference / RMSE / mean u² / safety termination / Return')
+print(motor_evaluate(proportional))
+</code></pre><pre class="notebook-output">reference / RMSE / mean u² / safety termination / Return
+[[  0.5          0.12626501   0.07338515   0.          -1.96121101]
+ [  1.           0.25292968   0.29432127   0.          -7.86894852]
+ [  1.5          0.3970162    0.6158097    0.         -18.84123509]]
+</pre></section><section class="notebook-cell">
+<p><span id="공식-문서데이터"></span></p>
+<h2 id="official-documentation-and-data">Official documentation and data</h2>
+<ul>
+<li><a href="https://isaac-sim.github.io/IsaacLab/develop/source/isaaclab/tutorial.html" rel="noopener noreferrer" target="_blank">Isaac Lab · Robot learning tutorial</a></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

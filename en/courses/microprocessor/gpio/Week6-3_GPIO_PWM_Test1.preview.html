@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Week6-3_GPIO_PWM_Test1</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="1b1fd64420b57fbef66b69638fc63c90660c6dd2406d3176d3df06d1fdab5e9b" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/gpio/Week6-3_GPIO_PWM_Test1.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/gpio/Week6-3_GPIO_PWM_Test1.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="Week6-3_GPIO_PWM_Test1.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>Week6-3_GPIO_PWM_Test1</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="Week6-3_GPIO_PWM_Test1.ipynb" href="Week6-3_GPIO_PWM_Test1.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/gpio/Week6-3_GPIO_PWM_Test1.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><pre class="notebook-code"><code>import RPi.GPIO as GPIO
+import time
+
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(5, GPIO.OUT)
+pwm = GPIO.PWM(5, 100)  #100Hz
+duty = 50.0
+pwm.start(duty)
+
+try:
+    while(True):
+        pass
+finally:
+    print('cleaning up')
+    GPIO.cleanup()</code></pre></section><section class="notebook-cell"><pre class="notebook-code"><code></code></pre></section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

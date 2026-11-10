@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Multiclass Classification</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="112df5e63024ff2168cb7d5fe5fc0198952a4a1579d7af885bd69a4222370e80" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/machine-learning-lab/multiclass/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/machine-learning-lab/multiclass/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Machine Learning Lab</a></header><main class="directory" id="main"><h1>Multiclass Classification</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/machine-learning-lab/multiclass/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>Understanding the relationship between class scores, probabilities, and ground truth labels helps you interpret multiclass classification errors and incorrect labels.</p>
+</section><section class="notebook-cell">
+<p><span id="multiclass-logits와-prediction-비교"></span></p>
+<h2 id="comparing-multiclass-logits-and-predictions">Comparing multiclass logits and predictions</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p>Generate 6 samples per class, 18 in total, around the provided centers (-2,0),(2,0),(0,2). Use <code>seed=7</code>.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Check the input and label shapes for <code>Linear(2,3)</code> and CrossEntropy.</li>
+<li>Record the 3 logits, 3 probabilities, and prediction for each of the first 6 samples.</li>
+<li>Plot a scatter plot of the data and a loss curve.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>A 6-row output table and plots of the data and loss.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+import torch
+from torch import nn
+rng=np.random.default_rng(7)
+centers=np.array([[-2.,0.],[2.,0.],[0.,2.]])
+X_np=np.concatenate([c+rng.normal(0,.25,(6,2)) for c in centers]);y_np=np.repeat(np.arange(3),6)
+X=torch.tensor(X_np,dtype=torch.float32);y=torch.tensor(y_np,dtype=torch.long)
+def fit_multi(labels=y):
+    torch.manual_seed(7);m=nn.Linear(2,3);opt=torch.optim.SGD(m.parameters(),lr=.1);history=[]
+    for _ in range(200):
+        loss=nn.functional.cross_entropy(m(X),labels);opt.zero_grad();loss.backward();opt.step();history.append(loss.item())
+    return m,history
+model,history=fit_multi();logits=model(X).detach();prob=torch.softmax(logits,dim=1);pred=prob.argmax(dim=1)
+print(prob[:3],pred[:3])
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Samples:</strong></p>
+<p><strong>Ground truth:</strong></p>
+<p><strong>3 logits:</strong></p>
+<p><strong>3 probabilities:</strong></p>
+<p><strong>Prediction:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Do probabilities sum to 1 for each sample, and do logits and probabilities have the same argmax?</li>
+<li>Did you use integer indices for class labels?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="class별-결과와-모호한-입력"></span></p>
+<h2 id="results-by-class-and-ambiguous-inputs">Results by class and ambiguous inputs</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Pass query=[(-2,0),(2,0),(0,2),(0,0)] to the trained model.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Create a 3×3 confusion matrix for the 18 training samples.</li>
+<li>Record the probabilities and predictions for the 4 query points in a table.</li>
+<li>Compare the probability distributions for the cluster centers and (0,0).</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>A confusion matrix and a query table.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>query=torch.tensor([[-2.,0.],[2.,0.],[0.,2.],[0.,0.]])
+qprob=torch.softmax(model(query),dim=1).detach()
+print(qprob)
+# TODO: Complete the confusion matrix and table.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>query:</strong></p>
+<p><strong>P0:</strong></p>
+<p><strong>P1:</strong></p>
+<p><strong>P2:</strong></p>
+<p><strong>Prediction:</strong></p>
+<p><strong>Interpretation:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Does the confusion matrix sum to 18?</li>
+<li>Did you avoid interpreting the maximum probability as an absolute guarantee of the model's reliability?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="label-하나가-바뀐-자료"></span></p>
+<h2 id="data-with-one-changed-label">Data with one changed label</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Change only sample 0's label from 0 to 1, and retrain under the same conditions.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>First mark the changed label and its position.</li>
+<li>Compare the baseline and modified models in terms of loss, errors against original labels, and errors against modified labels.</li>
+<li>Explain the training difficulty by distinguishing issues with the iteration count from issues with the data.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>A comparison table of the two models and a brief interpretation.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>changed_y=y.clone();changed_y[0]=1
+changed_model,changed_history=fit_multi(changed_y)
+# TODO: Evaluate the same predictions against both sets of Labels.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>Model:</strong></p>
+<p><strong>Final loss:</strong></p>
+<p><strong>Error count against original labels:</strong></p>
+<p><strong>Error count against modified labels:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you keep the input data and initialization unchanged?</li>
+<li>Did you specify which labels were used as the evaluation reference?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

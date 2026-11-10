@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>목차</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/machine-learning-lab/python-review/Review_06_python_matplotlib.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="Review_06_python_matplotlib.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/machine-learning-lab/python-review/Review_06_python_matplotlib.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">전기공학머신러닝실습</a></header><main class="directory" id="main"><h1>목차</h1><nav class="notebook-actions"><a download="" href="Review_06_python_matplotlib.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/machine-learning-lab/python-review/Review_06_python_matplotlib.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell"><h1 id="목차">목차</h1>
+<ul>
+<li><a href="#Matplotlib">Matplotlib</a>
+<ul>
+<li><a href="#1-그래프">1 그래프</a></li>
+<li><a href="#2-연산">2 다중그래프</a></li>
+<li><a href="#3-관련함수">3 텍스트작업</a></li>
+<li><a href="#4-실습">4 실습</a></li>
+</ul></li>
+</ul>
+<span id="Matplotlib"></span><h1 id="matplotlib">Matplotlib</h1>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt</code></pre></section><section class="notebook-cell">
+<span id="1-그래프"></span><h3 id="그래프">1 그래프</h3>
+<ul>
+<li>plot 함수</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># 그래프로 그릴 점들의 
+# x좌표 값들과 y좌표 값들을 변수에 넣는다
+x = np.arange(0, 3 * np.pi, 0.1)
+y = np.sin(x)
+# plot함수를 이용해 점들을 그래프로 그린다
+plt.plot(x, y)
+# 그려진 그래프를 화면에 표시
+plt.show()</code></pre></section><section class="notebook-cell">
+<ul>
+<li>제목, 범주(legend), 축이름 표시</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>x = np.arange(0, 3 * np.pi, 0.1)
+y_sin = np.sin(x)
+y_cos = np.cos(x)
+# 그래프 초기화
+plt.clf()
+plt.plot(x, y_sin)
+plt.plot(x, y_cos)
+# 축이름 표시
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+# 제목 표시
+plt.title('Sine and Cosine')
+# 범주 표시 - 리스트를 이용
+# 리스트 크기는 그래프 개수와 같아야 함
+plt.legend(['Sine', 'Cosine'])
+plt.show()
+</code></pre></section><section class="notebook-cell">
+<span id="2-연산"></span><h3 id="다중-그래프">2 다중 그래프</h3>
+<ul>
+<li>subplot 함수</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>plt.clf()
+# 그래프 간격 조절
+left=0.0
+bottom=0.0
+right=1.0
+top=1.0
+wspace=1.0
+hspace=1.0
+plt.subplots_adjust(left, bottom, right, top, wspace, hspace)
+# 세로로 2개, 가로로 1개의 그래프 배치 선언
+# 그중 1번에 그래프 생성
+plt.subplot(2,1,1)
+plt.plot(x,y_sin)
+plt.title('Sine')
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+# 2번에 그래프 생성
+plt.subplot(2,1,2)
+plt.plot(x,y_cos)
+plt.title('Cosine')
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+plt.show()</code></pre></section><section class="notebook-cell">
+<span id="3-관련함수"></span><h3 id="텍스트-작업">3 텍스트 작업</h3>
+<ul>
+<li>text 함수</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>plt.clf()
+plt.plot(x, y_sin)
+plt.plot(x, y_cos)
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+plt.title('Sine and Cosine')
+plt.legend(['Sine', 'Cosine'])
+# text(a,b,s) : a, b 위치에 텍스트 s 출력
+plt.text(4,0.5, 'here!')
+# 텍스트로 수식 표현
+plt.text(6,0.5,r'$y=sin(x)$')
+plt.show()</code></pre></section><section class="notebook-cell">
+<ul>
+<li>annotate 함수</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>plt.clf()
+plt.plot(x, y_sin)
+plt.plot(x, y_cos)
+plt.xlabel('x axis')
+plt.ylabel('y axis')
+plt.title('Sine and Cosine')
+plt.legend(['Sine', 'Cosine'])
+plt.annotate('min', xy=(np.pi, -1), xytext=(5, -0.5), 
+             arrowprops=dict(facecolor='black', shrink=0.05),)
+plt.show()</code></pre></section><section class="notebook-cell">
+<span id="4-실습"></span><h3 id="실습">4 실습</h3>
+<ul>
+<li>2x2 그래프 그리기
+<ul>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>x</mi></mrow><annotation encoding="application/x-tex">y=x</annotation></semantics></math></span></li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><msup><mi>x</mi><mn>2</mn></msup></mrow><annotation encoding="application/x-tex">y=x^2</annotation></semantics></math></span></li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>s</mi><mi>i</mi><mi>n</mi><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">y=sin(x)</annotation></semantics></math></span></li>
+<li><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mi>c</mi><mi>o</mi><mi>s</mi><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex">y=cos(x)</annotation></semantics></math></span></li>
+</ul></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

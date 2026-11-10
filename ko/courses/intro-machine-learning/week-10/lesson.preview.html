@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Decision Tree와 Random Forest · 학습</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/intro-machine-learning/week-10/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="lesson.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/intro-machine-learning/week-10/lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">머신러닝의 이해</a></header><main class="directory" id="main"><h1>Decision Tree와 Random Forest · 학습</h1><nav class="notebook-actions"><a download="" href="lesson.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/intro-machine-learning/week-10/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="이번에-배울-내용">이번에 배울 내용</h2>
+<!-- exercise-guidance:intro-machine-learning/week-10/learning-intro -->
+<p>학습 자료를 잘 맞춘 트리가 새 자료에서도 좋은지 확인해 모델 복잡도를 선택합니다. <!-- /exercise-guidance:intro-machine-learning/week-10/learning-intro --></p>
+</section><section class="notebook-cell">
+<h2 id="트리의-질문과-복잡도">트리의 질문과 복잡도</h2>
+<!-- exercise-guidance:intro-machine-learning/week-10/learning-1 -->
+<p>Decision Tree는 특징값을 기준으로 자료를 나눕니다. 깊이가 커지면 학습 자료의 세부 차이까지 맞출 수 있지만 새 자료에서 오류가 커질 수 있습니다. <!-- /exercise-guidance:intro-machine-learning/week-10/learning-1 --></p>
+</section><section class="notebook-cell">
+<h2 id="같은-조건의-모델-비교">같은 조건의 모델 비교</h2>
+<!-- exercise-guidance:intro-machine-learning/week-10/learning-2 -->
+<p>Random Forest는 여러 트리의 결과를 모읍니다. 단일 트리와 같은 split·전처리·지표로 비교해야 복잡도 차이를 해석할 수 있습니다. 정확도와 클래스별 오류를 함께 봅니다. <!-- /exercise-guidance:intro-machine-learning/week-10/learning-2 --></p>
+</section><section class="notebook-cell">
+<h2 id="풀이-예제">풀이 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-10/learning-example -->
+<p>Iris 데이터를 <code>test_size=.3</code>, <code>random_state=7</code>, <code>stratify=y</code>로 나눕니다. 깊이는 1,3,None입니다. <!-- /exercise-guidance:intro-machine-learning/week-10/learning-example --></p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.tree import DecisionTreeClassifier
+X,y=load_iris(return_X_y=True)
+Xtr,Xte,ytr,yte=train_test_split(X,y,test_size=.3,random_state=7,stratify=y)
+model=DecisionTreeClassifier(max_depth=3,random_state=7).fit(Xtr,ytr)
+print(model.score(Xte,yte))
+</code></pre><pre class="notebook-output">0.9777777777777777
+</pre></section><section class="notebook-cell">
+<h2 id="참고-예제">참고 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-10/learning-references -->
+<details class="learning-references">
+<summary>
+추가 예제 보기
+</summary>
+<p>
+<a data-course-reference="" href="index.html">참고 자료</a>
+</p>
+</details>
+<!-- /exercise-guidance:intro-machine-learning/week-10/learning-references -->
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

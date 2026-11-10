@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Drone Movement · Study</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="23b74a55d845482df5f49025b389cd14502b8aea99834fef5abcb61efa1f151c" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/robot-basic-lab/drone-navigation/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/robot-basic-lab/drone-navigation/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Robot Basic Lab</a></header><main class="directory" id="main"><h1>Drone Movement · Study</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/robot-basic-lab/drone-navigation/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="드론-이동-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>This exercise simulates coordinates. When extending it to actual flight, separately check the provided device's coordinate system, units, and command response behavior.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Assuming forward and sideways directions stay the same after turning will lead to an incorrect path. First check the coordinate frames through calculation.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>Image/input events → coordinate/validity checks → bounded commands → path/failure checks</p>
+</section><section class="notebook-cell">
+<p><span id="body-frame과-world-frame"></span></p>
+<h2 id="body-frame-and-world-frame">Body Frame and World Frame</h2>
+<p>If the aircraft's forward direction is x and left is y, moving forward after a yaw rotation follows a different direction in the World Frame. At yaw=90°, forward body movement follows the world y direction.</p>
+<p>Changing the order of rotation and translation generally changes the result.</p>
+</section><section class="notebook-cell">
+<p><span id="path와-오차를-함께-보기"></span></p>
+<h2 id="examine-paths-and-errors-together">Examine paths and errors together</h2>
+<p>Even with a correct command path, accumulated distance errors change the endpoint. First check coordinates, units, and rotation signs in a simulated path, then examine endpoint distributions under different error conditions. Validate actual flight commands separately from this calculation.</p>
+</section><section class="notebook-cell">
+<p><span id="matlab과-python의-tello-명령-비교"></span></p>
+<h2 id="compare-matlab-and-python-tello-commands">Compare MATLAB and Python Tello commands</h2>
+<p>The existing MATLAB materials use the Ryze Tello support package. In Python, DJITelloPy can express the same actions.</p>
+<p>MATLAB distance arguments use m, while Python move_forward arguments use cm. Also check rotation API units and directions.</p>
+<p>For example, moving forward 0.5 m corresponds to moveforward(r,‘Distance’,0.5) in MATLAB and tello.move_forward(50) in Python. These calls send commands to an airborne aircraft, so the basic example checks only the command list and unit conversion.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>Start at (0,0) m with yaw=0°. Forward is body +x, right is body -y, and yaw is counterclockwise. Use the 5 provided commands.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import math
+import numpy as np
+import matplotlib.pyplot as plt
+# world x: initial forward direction, world y: initial left direction, yaw: counterclockwise in degrees
+commands=[('forward',1.),('right',.5),('yaw',90.),('forward',1.),('right',.5)]
+pos=np.array([0.,0.]);yaw=0.;trace=[pos.copy()]
+def body_to_world(dx,dy,yaw_deg):
+    a=math.radians(yaw_deg)
+    return np.array([[math.cos(a),-math.sin(a)],[math.sin(a),math.cos(a)]])@np.array([dx,dy])
+# Example: world displacement for 1 m forward at yaw=90
+print(body_to_world(1,0,90))
+</code></pre><pre class="notebook-output">[6.123234e-17 1.000000e+00]
+</pre></section><section class="notebook-cell">
+<p><span id="공식-문서데이터"></span></p>
+<h2 id="official-documentation-and-data">Official documentation and data</h2>
+<ul>
+<li><a href="https://www.mathworks.com/help/supportpkg/ryzeio/setup-and-configuration.html" rel="noopener noreferrer" target="_blank">MATLAB · Ryze Tello support</a></li>
+<li><a href="https://djitellopy.readthedocs.io/en/latest/tello/" rel="noopener noreferrer" target="_blank">Python · DJITelloPy API</a></li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

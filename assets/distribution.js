@@ -1,0 +1,1 @@
+(() => { const update = () => document.querySelectorAll('.distribution-language a').forEach(a => { const u = new URL(a.href, location.href); u.search = location.search; u.hash = location.hash; a.href = u.href; }); update(); window.addEventListener('course-runtime-change', update); })();

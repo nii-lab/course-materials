@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Control Flow and Functions · Learning Materials</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="7a01f2e18a7fe2097d2721d9faa26cc425c76272c12371a31992968458feed14" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-04/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-04/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Control Flow and Functions · Learning Materials</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-04/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="제어문과-함수-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>A single boundary value changes the decision. Turn a conditional into a function and compare ordinary and boundary inputs.</p>
+</section><section class="notebook-cell">
+<p><span id="조건의-경계를-먼저-정하기"></span></p>
+<h2 id="define-the-condition-boundary-first">Define the Condition Boundary First</h2>
+<p>score&gt;60 and score≥60 give different results at 60. Test immediately below, at, and immediately above the boundary to check the comparison rule.</p>
+</section><section class="notebook-cell">
+<p><span id="함수로-재사용하기"></span></p>
+<h2 id="reuse-with-a-function">Reuse with a Function</h2>
+<p>When applying the same decision rule to multiple samples, define the inputs, Threshold, and outputs as the function contract. Handle empty data and nonnumeric inputs separately from valid scores.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>Scores=[45,60,75,90], and the passing criterion is 60 or higher.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>scores=[45,60,75,90]
+def pass_flags(values,threshold=60):
+    return [v&gt;=threshold for v in values]
+print(pass_flags(scores))
+</code></pre><pre class="notebook-output">[False, True, True, True]
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

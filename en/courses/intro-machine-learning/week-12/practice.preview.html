@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Multilayer Perceptron</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="8731a42f10c21611e82303c66855d17dd8d73ccf7fc08259416de44c7a3a4eb9" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-12/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-12/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Multilayer Perceptron</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-12/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>Compare a complex model with a simple baseline classifier on the same data to examine whether complexity is always beneficial.</p>
+</section><section class="notebook-cell">
+<p><span id="mlp와-기준-모델"></span></p>
+<h2 id="mlp-and-baseline-models">MLP and Baseline Models</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p>Split Iris using the same 70/30 split as above, and fit StandardScaler only on Train.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Compare LogisticRegression(max_iter=500) and MLPClassifier(hidden_layer_sizes=(16,),max_iter=300,<code>random_state=7</code>).</li>
+<li>Record Train Accuracy, Test Accuracy, and whether convergence warnings occurred.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>A table of both models and Test Confusion Matrices.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from sklearn.linear_model import LogisticRegression
+from sklearn.neural_network import MLPClassifier
+X,y=load_iris(return_X_y=True)
+Xtr,Xte,ytr,yte=train_test_split(X,y,test_size=.3,random_state=7,stratify=y)
+scaler=StandardScaler().fit(Xtr);Xtr=scaler.transform(Xtr);Xte=scaler.transform(Xte)
+# TODO: Compare the two models using the same split and scaling.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Model:</strong></p>
+<p><strong>Train Accuracy:</strong></p>
+<p><strong>Test Accuracy:</strong></p>
+<p><strong>Iterations and warnings:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Did you avoid refitting the scaler on test data?</li>
+<li>Did you avoid hiding warnings and assuming that the result had converged?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="network-크기-비교"></span></p>
+<h2 id="comparing-network-sizes">Comparing Network Sizes</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Change only MLP's hidden_layer_sizes to (4,),(16,),(32,), and compare using the same metrics.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Reuse the preceding Train/Test split and Scaler fitted on Train. Train MLPs by changing only <code>hidden_layer_sizes</code> to <code>(4,)</code>, <code>(16,)</code>, and <code>(32,)</code>.</li>
+<li>Keep <code>max_iter=300</code>, <code>random_state=7</code>, and the other settings unchanged. Record hidden size, train accuracy, test accuracy, and whether convergence warnings occur in a table.</li>
+<li>Explain how Train Accuracy and Test Accuracy each change as Hidden size increases, distinguishing cases with and without warnings.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>A table comparing Accuracy and convergence warnings by Hidden size.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>hidden_sizes=[(4,),(16,),(32,)]
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>Hidden size:</strong></p>
+<p><strong>Train Accuracy:</strong></p>
+<p><strong>Test Accuracy:</strong></p>
+<p><strong>Convergence warnings:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Did you use the same split and preprocessing for each model?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="다른-입력에서도-확인하기"></span></p>
+<h2 id="checking-other-inputs">Checking Other Inputs</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Compare the same two models with split <code>seed=11</code> and examine variability in a small dataset.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>Change only the split Seed to 11, refit the Scaler on the new Train set, and transform Train and Test.</li>
+<li>Retrain the Logistic Regression and Hidden <code>(16,)</code> MLP from Activity 1 on the new Train set with the same settings.</li>
+<li>Tabulate split seed, model name, Train Accuracy, and Test Accuracy, and compare with the two-model comparison at seed 7. Explain how changing the Test samples affected the comparison.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>A table of both models' Accuracy for each shared split and changes in the comparison results.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Use the preceding activity's data and functions to check the specified new examples.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>Split Seed:</strong></p>
+<p><strong>Model and settings:</strong></p>
+<p><strong>Train·Test Accuracy:</strong></p>
+<p><strong>Comparing different splits:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you refit the scaler only on the new train data?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

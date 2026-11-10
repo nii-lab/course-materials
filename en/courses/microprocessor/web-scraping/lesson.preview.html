@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>External data collection and quality checks · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="19c09f723a3a2de427571110d2683fe2e639c2742c4132ef2969114826cc8353" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/web-scraping/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/web-scraping/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>External data collection and quality checks · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/web-scraping/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="외부-데이터-수집과-품질-점검-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Check both the HTML structure and extraction rules so that missing fields on a page do not cause other records to be discarded.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>JSON and HTML responses → field and unit checks → valid and rejected data → CSV storage</p>
+</section><section class="notebook-cell">
+<p><span id="수집-성공과-값의-품질"></span></p>
+<h2 id="successful-collection-and-value-quality">Successful collection and value quality</h2>
+<p>Receiving JSON does not make it ready for analysis. Check field presence, data types, physical ranges, and units in order. Replacing missing values with actual 0 values can distort means and alarm thresholds.</p>
+</section><section class="notebook-cell">
+<p><span id="입력-형식이-바뀌어도-지킬-경계"></span></p>
+<h2 id="boundaries-to-preserve-when-the-input-format-changes">Boundaries to preserve when the input format changes</h2>
+<p>Separate collection, cleaning, and storage into functions to limit the impact of API field or HTML structure changes. Record reasons for rejected rows, and check that numbers become strings during a CSV round trip.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>The sensor response contains device, timestamp, and temperature_c. The second row lacks a temperature, and the third has a numeric string.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import json
+payload='[{"device":"a","timestamp":0,"temperature_c":21.2},{"device":"a","timestamp":1},{"device":"b","timestamp":0,"temperature_c":"22.1"}]'
+rows=json.loads(payload)
+def clean(row):
+    if 'temperature_c' not in row:return None,'missing temperature'
+    try:return dict(row,temperature_c=float(row['temperature_c'])),'ok'
+    except (ValueError,TypeError):return None,'invalid temperature'
+for row in rows:print(clean(row))
+</code></pre><pre class="notebook-output">({'device': 'a', 'timestamp': 0, 'temperature_c': 21.2}, 'ok')
+(None, 'missing temperature')
+({'device': 'b', 'timestamp': 0, 'temperature_c': 22.1}, 'ok')
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

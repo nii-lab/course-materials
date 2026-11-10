@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Recurrent Neural Network</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="a677c18d95d369f100128e7a6a9ccd5faf119b5d4390cffef792ed5155071c28" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/ai-applications/recurrent/L18_Recurrent_Neural_Network.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/ai-applications/recurrent/L18_Recurrent_Neural_Network.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="L18_Recurrent_Neural_Network.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">AI Applications</a></header><main class="directory" id="main"><h1>Recurrent Neural Network</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="L18_Recurrent_Neural_Network.ipynb" href="L18_Recurrent_Neural_Network.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/ai-applications/recurrent/L18_Recurrent_Neural_Network.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h3 id="imports">Imports</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# for reproducibility
+torch.manual_seed(100)
+</code></pre><pre class="notebook-output">&lt;torch._C.Generator at 0x79192b2df150&gt;</pre></section><section class="notebook-cell">
+<span id="dataset-construction"></span><h3 id="1-dataset-construction">1 Dataset Construction</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Dictionary
+sample_sentence = 'hi!hello.'
+char_set = list(set(sample_sentence))
+dic = {c: i for i, c in enumerate(char_set)}
+
+# Parameters
+dic_size = len(dic)
+input_size = dic_size
+hidden_size = dic_size
+
+# Dataset setting
+x_batch = []
+y_batch = []
+
+x_data = [dic[c] for c in sample_sentence[:-1]]
+x_one_hot = [np.eye(dic_size)[x] for x in x_data]
+y_data = [dic[c] for c in sample_sentence[1:]]
+
+x_batch.append(x_one_hot)
+y_batch.append(y_data)
+
+# To torch tensors
+X = torch.FloatTensor(x_batch)
+Y = torch.LongTensor(y_batch)
+print(X.shape)
+print(Y.shape)</code></pre><pre class="notebook-output">torch.Size([1, 8, 7])
+torch.Size([1, 8])
+</pre></section><section class="notebook-cell">
+<p><span id="rnn-model"></span></p>
+<h3 id="2-rnn-model">2 RNN model</h3>
+<ul>
+<li>Input (input structure)
+<ul>
+<li>Input type: <code>torch.Tensor</code></li>
+<li>Input shape: (N x S x E)
+<ul>
+<li>N: Batch size, S: Sequence length, E: Embedding size</li>
+<li>Only when <strong>batch_first=True</strong></li>
+</ul></li>
+<li>Input ‘hi!hello’
+<ul>
+<li>(1, 8, 7)</li>
+</ul></li>
+</ul></li>
+<li>Hidden (output structure)
+<ul>
+<li>Hidden type: <code>torch.Tensor</code></li>
+<li>Output ‘i!hello.’
+<ul>
+<li>(1, 8, 7)</li>
+</ul></li>
+</ul></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Model
+learning_rate = 0.1
+training_epochs = 50
+model = nn.RNN(input_size, hidden_size, batch_first=True)</code></pre></section><section class="notebook-cell"><pre class="notebook-code"><code># define cost/loss &amp; optimizer
+criterion = nn.CrossEntropyLoss()    # Softmax
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# train
+for epoch in range(training_epochs):
+  optimizer.zero_grad()
+  outputs, _status = model(X)
+  loss = criterion(outputs.reshape(-1, dic_size), Y.reshape(-1))
+  loss.backward()
+  optimizer.step()
+  if epoch % 5 == 4:
+    result = outputs.data.numpy().argmax(axis=2)
+    result_str = ''.join([char_set[c] for c in np.squeeze(result)])
+    print('epoch: ',epoch, 'loss: ', loss.item(), 'prediction: ', result_str, 'true Y: ', sample_sentence[1:])
+</code></pre><pre class="notebook-output">epoch:  4 loss:  1.2792741060256958 prediction:  i!hillo. true Y:  i!hello.
+epoch:  9 loss:  0.9466097354888916 prediction:  i!hillo. true Y:  i!hello.
+epoch:  14 loss:  0.8066588640213013 prediction:  i!hillo. true Y:  i!hello.
+epoch:  19 loss:  0.7434771656990051 prediction:  i!hillo. true Y:  i!hello.
+epoch:  24 loss:  0.712984561920166 prediction:  i!hillo. true Y:  i!hello.
+epoch:  29 loss:  0.6942877769470215 prediction:  i!hillo. true Y:  i!hello.
+epoch:  34 loss:  0.6845752596855164 prediction:  i!hillo. true Y:  i!hello.
+epoch:  39 loss:  0.6790880560874939 prediction:  i!hillo. true Y:  i!hello.
+epoch:  44 loss:  0.6758877635002136 prediction:  i!hillo. true Y:  i!hello.
+epoch:  49 loss:  0.6733384132385254 prediction:  i!hillo. true Y:  i!hello.
+</pre></section><section class="notebook-cell">
+<p><span id="assignment"></span></p>
+<h3 id="3-assignment">3 Assignment</h3>
+<p><span id="다음-3개의-문장을-batch-data로-활용해-rnn을-학습해보자-아래의-미완성-코드-위-실습코드-실행결과를-참고"></span></p>
+<h3 id="train-an-rnn-using-the-following-3-sentences-as-batch-data-refer-to-the-incomplete-code-below-the-exercise-code-above-and-the-execution-results">Train an RNN using the following 3 sentences as batch data (refer to the incomplete code below, the exercise code above, and the execution results)</h3>
+<ul>
+<li>‘howareyou’</li>
+<li>‘whats up?’</li>
+<li>‘iamgreat.’</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import torch
+import torch.nn as nn
+import torch.optim as optim
+
+# for reproducibility
+torch.manual_seed(100)
+
+# Dictionary
+sample_sentences = ['howareyou', 'whats up?', 'iamgreat.']
+char_set = list(set(''.join(sample_sentences)))
+dic = {c: i for i, c in enumerate(char_set)}
+
+# Parameters
+dic_size = len(dic)
+input_size = dic_size
+hidden_size = dic_size
+
+# Dataset setting
+input_batch = []
+target_batch = []
+
+for sentence in sample_sentences:
+
+
+# To torch tensors
+X = torch.FloatTensor(input_batch)
+Y = torch.LongTensor(target_batch)
+
+# Model
+learning_rate = 0.05
+training_epochs = 500
+model = nn.RNN(input_size, hidden_size, batch_first=True)
+
+# define cost/loss &amp; optimizer
+criterion = nn.CrossEntropyLoss()    # Softmax
+optimizer = optim.Adam(model.parameters(), lr=learning_rate)
+
+# train
+for epoch in range(training_epochs):
+
+result = outputs.data.numpy().argmax(axis=2)
+for sentence in result:
+  print(''.join([char_set[c] for c in np.squeeze(sentence)]))
+</code></pre></section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>GPIO · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="dcfefdc2ae7200605ccebb1eeb703092d19b509f7e814e1e86141ddedc834bd9" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/gpio/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/gpio/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>GPIO · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/gpio/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="gpio-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>Use the recorded waveform for the baseline exercise. For the hardware extension, compare the BCM numbers and input/output settings in the original RPi.GPIO code with the board you use.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Use timestamped records to examine multiple signals from a single button press, and define input handling rules.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>Button signal → transition times → polling and debounce → press events</p>
+</section><section class="notebook-cell">
+<p><span id="버튼의-물리-신호와-사건"></span></p>
+<h2 id="physical-button-signals-and-events">Physical button signals and events</h2>
+<p>A mechanical contact can change several times briefly after one press. Recorded transition times show why the number of presses differs from the number of signal changes.</p>
+</section><section class="notebook-cell">
+<p><span id="관측-간격과-debounce"></span></p>
+<h2 id="observation-intervals-and-debounce">Observation intervals and debounce</h2>
+<p>Polling is how often values are read; debounce is a rule for grouping closely spaced changes. Polling intervals that are too long can miss short inputs, while debounce intervals that are too long can merge actual successive inputs.</p>
+<p>Convert time units to a common unit for comparison.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>(t_ms,level)=[(0,0),(10,1),(12,0),(14,1),(50,0),(80,1)]. Between records, the preceding level is maintained.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+events=[(0,0),(10,1),(12,0),(14,1),(50,0),(80,1)]
+rising=[t for (t,x),(_,previous) in zip(events[1:],events[:-1]) if previous==0 and x==1]
+print('raw rising',rising)
+</code></pre><pre class="notebook-output">raw rising [10, 14, 80]
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

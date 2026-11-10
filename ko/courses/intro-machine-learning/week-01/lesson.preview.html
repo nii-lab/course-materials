@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Machine Learning 소개 · 학습</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/intro-machine-learning/week-01/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="lesson.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/intro-machine-learning/week-01/lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">머신러닝의 이해</a></header><main class="directory" id="main"><h1>Machine Learning 소개 · 학습</h1><nav class="notebook-actions"><a download="" href="lesson.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/intro-machine-learning/week-01/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="이번에-배울-내용">이번에 배울 내용</h2>
+<!-- exercise-guidance:intro-machine-learning/week-01/learning-intro -->
+<p>어떤 기준으로 나누는지가 예측 결과를 바꿉니다. 간단한 Threshold로 입력·정답·판정의 차이를 확인합니다. <!-- /exercise-guidance:intro-machine-learning/week-01/learning-intro --></p>
+</section><section class="notebook-cell">
+<h2 id="전체-흐름">전체 흐름</h2>
+<!-- exercise-guidance:intro-machine-learning/week-01/learning-flow -->
+<p>표본·특징 → 정리·자료 분리 → 기준 모델 → 새 자료의 오류 <!-- /exercise-guidance:intro-machine-learning/week-01/learning-flow --></p>
+</section><section class="notebook-cell">
+<h2 id="규칙과-학습할-기준">규칙과 학습할 기준</h2>
+<!-- exercise-guidance:intro-machine-learning/week-01/learning-1 -->
+<p>입력 x와 정답 y, 예측 ŷ를 따로 둡니다. Threshold 규칙도 자료를 나누는 작은 모델입니다. 기준을 바꿨을 때 어떤 표본에서 판정이 달라지는지 먼저 확인합니다. <!-- /exercise-guidance:intro-machine-learning/week-01/learning-1 --></p>
+</section><section class="notebook-cell">
+<h2 id="틀린-표본에서-문제-읽기">틀린 표본에서 문제 읽기</h2>
+<!-- exercise-guidance:intro-machine-learning/week-01/learning-2 -->
+<p>정답을 한 개 바꾸면 모든 기준을 만족하기 어려울 수 있습니다. 오답 수를 줄이는 것과 정답의 품질을 확인하는 것은 다른 작업입니다. <!-- /exercise-guidance:intro-machine-learning/week-01/learning-2 --></p>
+</section><section class="notebook-cell">
+<h2 id="풀이-예제">풀이 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-01/learning-example -->
+<p><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>5</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>6</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>7</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>8</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">x=\begin{bmatrix}1&amp;2&amp;3&amp;4&amp;5&amp;6&amp;7&amp;8\end{bmatrix}</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">y=\begin{bmatrix}0&amp;0&amp;0&amp;0&amp;1&amp;1&amp;1&amp;1\end{bmatrix}</annotation></semantics></math></span>입니다. x는 센서 특징, y는 두 상태의 Label입니다. <!-- /exercise-guidance:intro-machine-learning/week-01/learning-example --></p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+x=np.arange(1,9);y=(x&gt;4).astype(int)
+pred=(x&gt;4).astype(int)
+print(np.mean(pred==y))
+</code></pre><pre class="notebook-output">1.0
+</pre></section><section class="notebook-cell">
+<h2 id="참고-예제">참고 예제</h2>
+<!-- exercise-guidance:intro-machine-learning/week-01/learning-references -->
+<details class="learning-references">
+<summary>
+추가 예제 보기
+</summary>
+<p>
+<a data-course-reference="" href="index.html">참고 자료</a>
+</p>
+</details>
+<!-- /exercise-guidance:intro-machine-learning/week-01/learning-references -->
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

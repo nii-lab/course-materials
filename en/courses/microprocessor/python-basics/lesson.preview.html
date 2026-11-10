@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Python basics · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="b1a98b0480453a3623e60fe4ee35d9223af6202cd5ca0a94eeba63ffea1ae29f" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/python-basics/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/python-basics/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>Python basics · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/python-basics/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="python-기초-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Sensor records include missing and boundary values. Try handling normal and exceptional data with the same function.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>Sensor and request → format and unit checks → storage and state changes → query and response checks</p>
+</section><section class="notebook-cell">
+<p><span id="측정-한-건의-의미"></span></p>
+<h2 id="meaning-of-one-measurement">Meaning of one measurement</h2>
+<p>A device ID, measurement time, value, and unit are needed to interpret sensor numbers. A dictionary names the fields, and a list holds multiple measurements. None indicates a failed observation, distinct from an actual value of 0.</p>
+</section><section class="notebook-cell">
+<p><span id="처리-규칙을-함수로-고정하기"></span></p>
+<h2 id="define-processing-rules-in-a-function">Define processing rules in a function</h2>
+<p>Handling normal values, missing values, and empty data separately with ad hoc fixes can lead to inconsistent results. Combine input validation and summary calculations in a small function, and check two or three boundary cases.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>The record is [(0,21.0),(1,21.5),(2,None),(3,22.0),(4,20.5)], where each pair is time [s] and temperature [°C].</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>records=[(0,21.),(1,21.5),(2,None),(3,22.),(4,20.5)]
+valid=[value for _,value in records if value is not None]
+print('valid count',len(valid),'mean',sum(valid)/len(valid))
+</code></pre><pre class="notebook-output">valid count 4 mean 21.25
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Linear Regression · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="22669a517657095c8f3b3720443443465a01c3208cbb98d5c9ba1ea6c7673630" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-07/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-07/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Linear Regression · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-07/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="linear-regression-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Examine predictions outside the observed range and the effect of an outlier on the regression equation.</p>
+</section><section class="notebook-cell">
+<p><span id="관측과-예측식"></span></p>
+<h2 id="observations-and-prediction-equations">Observations and Prediction Equations</h2>
+<p>Least squares reduces the sum of squared differences between predictions and observations. Outliers can have a large influence, so inspect residuals as well as the fitted line.</p>
+</section><section class="notebook-cell">
+<p><span id="새-입력에서의-평가"></span></p>
+<h2 id="evaluation-on-new-inputs">Evaluation on New Inputs</h2>
+<p>Predictions inside and outside the observed range have different evidential bases. In practice, split data first, then fit preprocessing and models only on training data. A Pipeline helps combine these steps in order.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>The data are <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>5</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">x=\begin{bmatrix}0&amp;1&amp;2&amp;3&amp;4&amp;5\end{bmatrix}</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3.2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4.8</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>7.1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>8.9</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>11.2</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">y=\begin{bmatrix}1&amp;3.2&amp;4.8&amp;7.1&amp;8.9&amp;11.2\end{bmatrix}</annotation></semantics></math></span>. The model is y_hat=w*x+b.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+x=np.arange(6.);y=np.array([1,3.2,4.8,7.1,8.9,11.2]);X=np.c_[x,np.ones_like(x)]
+coef=np.linalg.lstsq(X,y,rcond=None)[0]
+print(coef)
+</code></pre><pre class="notebook-output">[2.01142857 1.0047619 ]
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Logistic Regression</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="1b9690d030d963fb84081c58a9c7b48e57dd91864a45968429458f69fddb4845" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-08/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-08/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Logistic Regression</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-08/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>After obtaining probabilities, use a Threshold to decide whether to prioritize reducing missed detections or false alarms.</p>
+</section><section class="notebook-cell">
+<p><span id="logit확률판정"></span></p>
+<h2 id="logits-probabilities-and-decisions">Logits, Probabilities, and Decisions</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">l</mi><mi mathvariant="normal">o</mi><mi mathvariant="normal">g</mi><mi mathvariant="normal">i</mi><mi mathvariant="normal">t</mi></mrow><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>0.5</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0.5</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{logit}=\begin{bmatrix}-2&amp;-0.5&amp;0&amp;0.5&amp;2\end{bmatrix}</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mrow><mi mathvariant="normal">L</mi><mi mathvariant="normal">a</mi><mi mathvariant="normal">b</mi><mi mathvariant="normal">e</mi><mi mathvariant="normal">l</mi></mrow><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathrm{Label}=\begin{bmatrix}0&amp;0&amp;1&amp;1&amp;1\end{bmatrix}</annotation></semantics></math></span>.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Calculate probabilities with Sigmoid and record decisions at Threshold=.5.</li>
+<li>Compare TP, FP, FN, TN, and Accuracy at Threshold=.3,.5,.7.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>A probability/decision table and a Confusion Matrix for each Threshold.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+logit=np.array([-2,-.5,0,.5,2]);y=np.array([0,0,1,1,1]);p=1/(1+np.exp(-logit))
+print(p,p&gt;=.5)
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Threshold:</strong></p>
+<p><strong>TP:</strong></p>
+<p><strong>FP:</strong></p>
+<p><strong>FN:</strong></p>
+<p><strong>TN:</strong></p>
+<p><strong>Accuracy:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Did you avoid treating probabilities and final labels as the same values?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="틀리는-종류-선택"></span></p>
+<h2 id="selecting-error-types">Selecting Error Types</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Choose one of the three Thresholds for a sensor alarm scenario that prioritizes reducing missed detections (FN).</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Reuse the TP, FP, FN, TN, and Accuracy table for each threshold <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mn>0.3</mn><mo>,</mo><mn>0.5</mn><mo>,</mo><mn>0.7</mn></mrow><annotation encoding="application/x-tex">0.3,0.5,0.7</annotation></semantics></math></span> from the previous activity. Use the same logits and labels.</li>
+<li>Find the Threshold candidates with the fewest FNs. If candidates tie, compare their FPs, select one value, and record the FN and FP counts supporting your choice.</li>
+<li>Compare the decisions from your selected value and Threshold 0.5 for each sample, and explain which samples have different alarms.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>The selected Threshold and the reason for choosing it based on FN and FP.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>thresholds=[.3,.5,.7]
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>Threshold:</strong></p>
+<p><strong>FN:</strong></p>
+<p><strong>FP:</strong></p>
+<p><strong>Selected value and reasoning:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>If candidates tied, did you record the reason for your choice?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="다른-입력에서도-확인하기"></span></p>
+<h2 id="checking-other-inputs">Checking Other Inputs</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Compare a model that always predicts 0 on 100 synthetic Labels, 10% of which are Class 1.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>Create a Label array with 10 Class 1 samples and 90 Class 0 samples, and a prediction array filled with 0.</li>
+<li>Before running the code, calculate TP, FP, FN, TN, and Accuracy. Calculate the same values in code and compare them. Also record the number of missed Class 1 samples.</li>
+<li>Even if accuracy is high, can you conclude that the model reduces missed detections? Explain using your recorded FN.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>Expected and actual Confusion counts, and interpretation of Accuracy and missed detections.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Use the preceding activity's data and functions to check the specified new examples.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>TP, FP, FN, TN before running:</strong></p>
+<p><strong>Actual TP, FP, FN, TN:</strong></p>
+<p><strong>Accuracy:</strong></p>
+<p><strong>Missed Class 1 count and interpretation:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you distinguish overall Accuracy from the number of missed Class 1 samples?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>An HTTP API for sensor data · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="3b1cae1dc2657fb37bdca2ed3f97a168554eff50d2450fcc01a85e08c1d20c5e" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/web-server/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/web-server/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>An HTTP API for sensor data · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/web-server/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="센서-데이터를-제공하는-http-api-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>Requires fastapi and httpx. Use uvicorn additionally only if you choose browser testing.</p>
+<p>If the required package is missing, run <code>%pip install fastapi==0.162.0 httpx==0.28.1</code> in a Colab or Jupyter code cell.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>A running server does not imply correct request handling. First test paths, missing inputs, and safe responses.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>HTTP request → parameter validation → sensor query → JSON and status code</p>
+</section><section class="notebook-cell">
+<p><span id="요청검증조회응답"></span></p>
+<h2 id="requestvalidationqueryresponse">Request–validation–query–response</h2>
+<p>An HTTP API receives a request path and parameters, validates values, and returns data. Responses to invalid formats, invalid intervals, and nonexistent paths are part of its contract with users, as is normal JSON.</p>
+</section><section class="notebook-cell">
+<p><span id="작은-요청으로-확인하기"></span></p>
+<h2 id="check-with-small-requests">Check with small requests</h2>
+<p>FastAPI's TestClient reproduces requests without exposing a network server. Format validation failures, nonexistent paths, and empty query results are different situations.</p>
+<p>Separating storage logic into a function lets you reuse the same rules across different paths.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>The FastAPI /readings path accepts device, start, and end. TestClient sends requests without starting an actual server.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from fastapi import FastAPI,HTTPException
+from fastapi.testclient import TestClient
+app=FastAPI()
+readings=[{'device':'m1','time_s':0.,'value':20.},{'device':'m1','time_s':1.,'value':21.}]
+@app.get('/readings')
+def get_readings(device:str,start:float=0,end:float=10):
+    if start&gt;end:raise HTTPException(status_code=400,detail='start must not exceed end')
+    return [row for row in readings if row['device']==device and start&lt;=row['time_s']&lt;=end]
+client=TestClient(app)
+for query in ['/readings?device=m1','/readings?device=m1&amp;start=2&amp;end=1']:
+    result=client.get(query);print(result.status_code,result.json())
+</code></pre><pre class="notebook-output">200 [{'device': 'm1', 'time_s': 0.0, 'value': 20.0}, {'device': 'm1', 'time_s': 1.0, 'value': 21.0}]
+400 {'detail': 'start must not exceed end'}
+</pre></section><section class="notebook-cell">
+<p><span id="공식-문서데이터"></span></p>
+<h2 id="official-documentation-and-data">Official documentation and data</h2>
+<ul>
+<li><a href="https://fastapi.tiangolo.com/tutorial/testing/" rel="noopener noreferrer" target="_blank">FastAPI · request testing</a></li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

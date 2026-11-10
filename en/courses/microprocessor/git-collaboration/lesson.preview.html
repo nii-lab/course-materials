@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>GitHub collaboration · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="a75f4c67e6cabe591d04d0a6bceee70b3d6f218018f6708d2694374c1c971705" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/git-collaboration/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/git-collaboration/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>GitHub collaboration · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/git-collaboration/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="github-협업-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>The baseline exercise uses a temporary local Git repository. You can explore changes, branches, and merges without a GitHub account or a remote repository connection.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Use a safe local example to learn how to combine changes without losing them when several people edit the same file.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>Edit file → diff/commit → branch/merge → verify final content</p>
+</section><section class="notebook-cell">
+<p><span id="commit은-비교-가능한-지점"></span></p>
+<h2 id="a-commit-is-a-point-for-comparison">A commit is a point for comparison</h2>
+<p>Saving a file and making a Git commit are different. Record changes in small, meaningful units and read the diff to see what changed. A branch names a line of history for separate experiments.</p>
+</section><section class="notebook-cell">
+<p><span id="충돌은-의도를-결정하는-문제"></span></p>
+<h2 id="resolving-a-conflict-means-choosing-the-intended-result">Resolving a conflict means choosing the intended result</h2>
+<p>When the same line is changed differently, Git cannot decide the correct final content. Read the purpose of both changes, keep the intended content, and run it again to check. Simply deleting conflict markers does not complete verification.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>In README.md in the temporary repository created by the code, change Condition: baseline to Condition: test.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>from pathlib import Path
+import tempfile, subprocess
+lab_tmp=tempfile.TemporaryDirectory(prefix='course-git-')
+repo=Path(lab_tmp.name)
+def git(*args):
+    return subprocess.check_output(['git','-C',str(repo),*args],text=True).strip()
+git('init','-b','main');git('config','user.name','Learner');git('config','user.email','learner@example.invalid')
+(repo/'README.md').write_text('Robot experiment\nCondition: baseline\n')
+git('add','README.md');git('commit','-m','Record baseline')
+print(repo,git('log','--oneline'))
+</code></pre><pre class="notebook-output">/var/folders/w7/d9v_mh_s5gbgqlr6pvxd72t40000gn/T/course-git-ecbsztiq e629da2 Record baseline
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

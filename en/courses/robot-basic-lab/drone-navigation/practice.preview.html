@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Drone Movement</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="31695ec16670aeceafe85cef2535a95f0da82b520be61dd4ae900e2bf4951211" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/robot-basic-lab/drone-navigation/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/robot-basic-lab/drone-navigation/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Robot Basic Lab</a></header><main class="directory" id="main"><h1>Drone Movement</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/robot-basic-lab/drone-navigation/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="드론-이동"></span></p>
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>Assuming forward and sideways directions stay the same after turning will lead to an incorrect path. First check the coordinate frames through calculation.</p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>This exercise simulates coordinates. When extending it to actual flight, separately check the provided device's coordinate system, units, and command response behavior.</p>
+</section><section class="notebook-cell">
+<p><span id="이동-명령의-좌표-확인"></span></p>
+<h2 id="check-movement-command-coordinates">Check movement command coordinates</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p>Start at (0,0) m with yaw=0°. Forward is body +x, right is body -y, and yaw is counterclockwise. Use the 5 provided commands.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>For each command, record one table row with displacement in the Body Frame, displacement in the World Frame, cumulative position, and yaw.</li>
+<li>Use body_to_world to compare your predicted positions with the code.</li>
+<li>Label the XY path with command sequence numbers and axis units.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>A 5-row command table and 1 XY path.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import math
+import numpy as np
+import matplotlib.pyplot as plt
+# world x: initial forward direction, world y: initial left direction, yaw: counterclockwise in degrees
+commands=[('forward',1.),('right',.5),('yaw',90.),('forward',1.),('right',.5)]
+pos=np.array([0.,0.]);yaw=0.;trace=[pos.copy()]
+def body_to_world(dx,dy,yaw_deg):
+    a=math.radians(yaw_deg)
+    return np.array([[math.cos(a),-math.sin(a)],[math.sin(a),math.cos(a)]])@np.array([dx,dy])
+# Example: world displacement for 1 m forward at yaw=90
+print(body_to_world(1,0,90))
+# TODO: Interpret commands in order and record position and yaw.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Command:</strong></p>
+<p><strong>Displacement in the Body Frame [m]:</strong></p>
+<p><strong>Displacement in the World Frame [m]:</strong></p>
+<p><strong>Cumulative (x,y) [m]:</strong></p>
+<p><strong>yaw [deg]:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Does position remain unchanged when only a yaw command executes?</li>
+<li>Does the displacement vector retain its length after rotation?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="같은-목적지의-다른-path"></span></p>
+<h2 id="different-paths-to-the-same-destination">Different paths to the same destination</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Use the final position of the first command sequence as the destination and create a new path aligned with the world axes, keeping yaw=0.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Specify the second command sequence you designed.</li>
+<li>Compare the two paths' final position error, total travel distance, and number of turns.</li>
+<li>Explain whether shortest distance and ease of executing actual commands are the same criterion.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>An overlay of the two paths and a comparison table.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Reuse the destination from the first activity and body_to_world.
+route2=[('forward',1.5),('left',.5)]
+# TODO: Check the final position from the first activity, then modify route2 to reach the destination.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>Path:</strong></p>
+<p><strong>Final position:</strong></p>
+<p><strong>Destination error [m]:</strong></p>
+<p><strong>Travel distance [m]:</strong></p>
+<p><strong>Number of turns:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Do both paths have the same starting point and destination?</li>
+<li>Have you avoided assuming planar coordinates are identical to the flight SDK's actual coordinate frame?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="명령-오차를-넣은-path"></span></p>
+<h2 id="paths-with-command-errors">Paths with command errors</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Add ±5% error to each movement distance. Fix <code>seed=7</code> and 30 repetitions, and set yaw error to 0.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>In each repetition, perturb only distance commands and save the final position.</li>
+<li>Plot the final positions as a scatter plot and calculate the mean and maximum distance error from the destination.</li>
+<li>Compare results with error rates of 0%,5%,10%.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>A position scatter plot, a table for 3 conditions, and a brief interpretation.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>rng=np.random.default_rng(7)
+length_errors=rng.uniform(-.05,.05,size=(30,4))
+# TODO: Apply error only to distance commands, excluding yaw.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>Error rate:</strong></p>
+<p><strong>Repetition count:</strong></p>
+<p><strong>Mean position error [m]:</strong></p>
+<p><strong>Maximum error [m]:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you record the seed and error distribution?</li>
+<li>At 0% error, does the path return to the reference path's destination?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="공식-예제데이터"></span></p>
+<h2 id="official-examples-and-data">Official examples and data</h2>
+<ul>
+<li><a href="https://www.mathworks.com/help/supportpkg/ryzeio/setup-and-configuration.html" rel="noopener noreferrer" target="_blank">MATLAB · Ryze Tello support</a></li>
+<li><a href="https://djitellopy.readthedocs.io/en/latest/tello/" rel="noopener noreferrer" target="_blank">Python · DJITelloPy API</a></li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

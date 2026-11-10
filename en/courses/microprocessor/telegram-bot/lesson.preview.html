@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Device command handling and messaging integration · Learning</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="86ea0bcd52fa048e3954403c4d3d8085dd8e1ddba71b6d750dba487c95cd0498" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/telegram-bot/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/telegram-bot/lesson.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>Device command handling and messaging integration · Learning</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="lesson.ipynb" href="lesson.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/telegram-bot/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="장치-명령-처리와-메시지-연동-학습"></span></p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>The basic activity uses Python only. Choose a real messenger or MQTT connection only after verifying the handling rules.</p>
+</section><section class="notebook-cell">
+<p><span id="이번에-배울-내용"></span></p>
+<h2 id="topics-covered">Topics covered</h2>
+<p>Separate input, state, and response so that the same command handling rules can be reused across messengers, the web, and device buses.</p>
+</section><section class="notebook-cell">
+<p><span id="전체-흐름"></span></p>
+<h2 id="overall-workflow">Overall workflow</h2>
+<p>External message → common command → validation and deduplication → state and response</p>
+</section><section class="notebook-cell">
+<p><span id="메시지와-장치-동작-분리"></span></p>
+<h2 id="separate-messages-from-device-actions">Separate messages from device actions</h2>
+<p>The same on command can arrive through the web, a messenger, or a device bus. Convert the transport format into a common request {request_id,device,command}, then pass it to one handler function.</p>
+</section><section class="notebook-cell">
+<p><span id="중복과-잘못된-명령"></span></p>
+<h2 id="duplicate-and-invalid-commands">Duplicate and invalid commands</h2>
+<p>Retransmission affects commands that specify a target state, such as on, differently from commands that change the current state, such as toggle. Validate the request ID, device, and command before handling duplicates, and record both the response and actual state.</p>
+</section><section class="notebook-cell">
+<p><span id="풀이-예제"></span></p>
+<h2 id="worked-example">Worked example</h2>
+<p>The inputs are /start, /led on, /led off, /led invalid, and /unknown. The initial LED state is off.</p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>def handle(text,state):
+    if text=='/start':return state,'Commands: /led on, /led off'
+    if text=='/led on':return True,'LED on'
+    if text=='/led off':return False,'LED off'
+    return state,'Usage: /led on | /led off'
+state=False
+for text in ['/start','/led on','/led off','/led invalid','/unknown']:
+    next_state,reply=handle(text,state);print(text,state,next_state,reply);state=next_state
+</code></pre><pre class="notebook-output">/start False False Commands: /led on, /led off
+/led on False True LED on
+/led off True False LED off
+/led invalid False False Usage: /led on | /led off
+/unknown False False Usage: /led on | /led off
+</pre></section><section class="notebook-cell">
+<p><span id="참고-예제"></span></p>
+<h2 id="reference-example">Reference example</h2>
+<p>View more examples</p>
+<p><a data-course-reference="" href="index.html">Reference materials</a></p>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Device command handling and messaging integration</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="0c54a6be043d55b73eaa9c757d3f85177c46c0172f16c67575c5c29bc7b3bdc6" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/microprocessor/telegram-bot/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/microprocessor/telegram-bot/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Microprocessor Applications</a></header><main class="directory" id="main"><h1>Device command handling and messaging integration</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/microprocessor/telegram-bot/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell"><p><span id="장치-명령-처리와-메시지-연동"></span></p>
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>Separate input, state, and response so that the same command handling rules can be reused across messengers, the web, and device buses.</p>
+</section><section class="notebook-cell">
+<p><span id="실행-조건"></span></p>
+<h2 id="execution-conditions">Execution conditions</h2>
+<p>The basic activity uses Python only. Choose a real messenger or MQTT connection only after verifying the handling rules.</p>
+</section><section class="notebook-cell">
+<p><span id="명령과-state-transition"></span></p>
+<h2 id="commands-and-state-transitions">Commands and state transitions</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p>The inputs are /start, /led on, /led off, /led invalid, and /unknown. The initial LED state is off.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Write handle(text,state) to return the new state and a response message.</li>
+<li>Process the input list in order and record the state before and after each step.</li>
+<li>For invalid arguments and unknown commands, preserve the state and return usage instructions.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>A 5-row state transition table and a function.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>def handle(text,state):
+    if text=='/start':return state,'Commands: /led on, /led off'
+    if text=='/led on':return True,'LED on'
+    if text=='/led off':return False,'LED off'
+    return state,'Usage: /led on | /led off'
+state=False
+for text in ['/start','/led on','/led off','/led invalid','/unknown']:
+    next_state,reply=handle(text,state);print(text,state,next_state,reply);state=next_state
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Input:</strong></p>
+<p><strong>Previous state:</strong></p>
+<p><strong>Next state:</strong></p>
+<p><strong>Response:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Can you check it through function calls without sending real messages?</li>
+<li>Does the LED state remain unchanged for invalid and unknown?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="반복-명령과-공백"></span></p>
+<h2 id="repeated-commands-and-whitespace">Repeated commands and whitespace</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Repeat /led on three times, and add ” /led off “ with leading and trailing spaces.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Check whether repeated commands preserve the state.</li>
+<li>Define rules for strip and case handling, then compare with the original function.</li>
+<li>Also choose two inputs to reject, and check that the state is preserved.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>A table with at least 6 inputs and 3 asserts.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>tests=['/led on','/led on','/led on',' /led off ','/LED ON','']
+# TODO: Compare the handler with normalized input against the original.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>Input:</strong></p>
+<p><strong>Normalization result:</strong></p>
+<p><strong>State:</strong></p>
+<p><strong>Accepted:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Did you apply consistent command normalization rules across inputs?</li>
+<li>Does repeated on avoid behaving like a toggle that reverses the state?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="전송-방식과-장치-로직-분리"></span></p>
+<h2 id="separate-transport-from-device-logic">Separate transport from device logic</h2>
+<p>Read <a href="../../../../assets/courses/microprocessor/telegram-bot/Week14-2_Telegram_Bot_Command_Handler.py">Week14-2_Telegram_Bot_Command_Handler.py</a> and <code>handle</code> and <code>dispatch</code> in this notebook, and map each role to its function or line in the table. Mark roles absent from the original as 'None' and distinguish them from the test implementation.</p>
+<p>Use the provided <code>outbox</code> log instead of sending real messages.</p>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Organize inputs from the web, messengers, and MQTT as {request_id,device,command}. Do not execute the same request_id again.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>Validate the request ID, device, and command, then pass them to the common handler function.</li>
+<li>Handle the same request sent twice so that the state changes only once.</li>
+<li>Record the response and actual state, and draw the request–handling–response flow.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>A role mapping table and 3 rows of simulated transmission logs.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>seen=set();outbox=[]
+def dispatch(message):
+    if message['request_id'] in seen:return 'duplicate'
+    seen.add(message['request_id']);outbox.append(dict(message));return 'accepted'
+message={'request_id':'r1','device':'fan','command':'on'}
+print(dispatch(message),dispatch(message),outbox)
+# TODO: Validate invalid device and command values before they enter seen.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>Role:</strong></p>
+<p><strong>Original function and location:</strong></p>
+<p><strong>Test substitute:</strong></p>
+<p><strong>Observed results:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Can you test the same handling logic without a token?</li>
+<li>Did you check state updates and external transmission independently?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

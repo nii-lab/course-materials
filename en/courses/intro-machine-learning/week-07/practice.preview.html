@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Linear Regression</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="613f1c12d2ed0d8038538815cfb4a5120397b6335628077220f1a4fa6ad2c9ec" name="notebook-source-sha256"/><meta content="2fa3ec4735ce499436bbf82e1bcd50570f11c20dfdf2a22a345c63892f3b7ff2" name="notebook-renderer-sha256"/><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/en/courses/intro-machine-learning/week-07/practice.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a href="../../../../ko/courses/intro-machine-learning/week-07/practice.preview.html" hreflang="ko">한국어</a> <a aria-current="page" href="practice.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">Course materials</a> · <a href="../index.html">Introduction to Machine Learning</a></header><main class="directory" id="main"><h1>Linear Regression</h1><p class="translation-note" data-translation-note="">English translation</p><nav class="notebook-actions"><a download="practice.ipynb" href="practice.ipynb">Download Colab notebook</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/en/courses/intro-machine-learning/week-07/practice.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Run in Colab ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<p><span id="학습-목표"></span></p>
+<h2 id="learning-objectives">Learning objectives</h2>
+<p>Examine predictions outside the observed range and the effect of an outlier on the regression equation.</p>
+</section><section class="notebook-cell">
+<p><span id="직선-모델과-오차"></span></p>
+<h2 id="straight-line-models-and-error">Straight-Line Models and Error</h2>
+<p><span id="시작-조건"></span></p>
+<h3 id="starting-conditions">Starting conditions</h3>
+<p>The data are <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>5</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">x=\begin{bmatrix}0&amp;1&amp;2&amp;3&amp;4&amp;5\end{bmatrix}</annotation></semantics></math></span>, <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>y</mi><mo>=</mo><mrow><mo form="prefix" stretchy="true">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>3.2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>4.8</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>7.1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>8.9</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>11.2</mn></mtd></mtr></mtable><mo form="postfix" stretchy="true">]</mo></mrow></mrow><annotation encoding="application/x-tex">y=\begin{bmatrix}1&amp;3.2&amp;4.8&amp;7.1&amp;8.9&amp;11.2\end{bmatrix}</annotation></semantics></math></span>. The model is y_hat=w*x+b.</p>
+<p><span id="진행-방법"></span></p>
+<h3 id="procedure">Procedure</h3>
+<ol type="1">
+<li>Calculate predictions, residuals, and MSE for w=2,<span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>b</mi><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">b=1</annotation></semantics></math></span>.</li>
+<li>Compare w,b obtained using <code>np.linalg.lstsq</code> with the baseline model in the same table.</li>
+</ol>
+<p><span id="남길-결과"></span></p>
+<h3 id="results-to-retain">Results to retain</h3>
+<ul>
+<li>Prediction and scatter plots, and a model comparison table.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import matplotlib.pyplot as plt
+x=np.arange(6.);y=np.array([1,3.2,4.8,7.1,8.9,11.2]);X=np.c_[x,np.ones_like(x)]
+coef=np.linalg.lstsq(X,y,rcond=None)[0]
+print(coef)
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검"></span></p>
+<h2 id="record-results-and-self-check">Record results and self-check</h2>
+<p><strong>Model:</strong></p>
+<p><strong>w:</strong></p>
+<p><strong>b:</strong></p>
+<p><strong>MSE:</strong></p>
+<p><strong>Prediction for <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">x=6</annotation></semantics></math></span>:</strong></p>
+<p><span id="확인할-점"></span></p>
+<h3 id="points-to-check">Points to check</h3>
+<ul>
+<li>Did you keep a consistent sign convention for the residual y_hat-y?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="한-표본의-영향"></span></p>
+<h2 id="the-influence-of-one-sample">The Influence of One Sample</h2>
+<p><span id="시작-조건-1"></span></p>
+<h3 id="starting-conditions-1">Starting conditions</h3>
+<p>Create data with the last y changed to 18 and compare changes in coefficients, MSE, and predictions at <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">x=6</annotation></semantics></math></span>.</p>
+<p><span id="진행-방법-1"></span></p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Keep <code>x</code> unchanged and create a copy with only the last <code>y</code> changed to 18. Apply <code>np.linalg.lstsq</code> separately to the original and modified data.</li>
+<li>Record the two models' <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>w</mi><mo>,</mo><mi>b</mi></mrow><annotation encoding="application/x-tex">w,b</annotation></semantics></math></span>, MSE on their respective training data, and predictions at <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>=</mo><mn>6</mn></mrow><annotation encoding="application/x-tex">x=6</annotation></semantics></math></span> in two rows. Plot the original points, modified points, and both prediction lines on the same axes.</li>
+<li>Using the table and plot, explain how changing one sample affected the coefficients and predictions for new inputs.</li>
+</ol>
+<p><span id="남길-결과-1"></span></p>
+<h3 id="results-to-retain-1">Results to retain</h3>
+<ul>
+<li>Two fitted lines and a table comparing coefficients, MSE, and predictions for new inputs.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>y2=y.copy();y2[-1]=18
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-1"></span></p>
+<h2 id="record-results-and-self-check-1">Record results and self-check</h2>
+<p><strong>Training data:</strong></p>
+<p><strong>w·b:</strong></p>
+<p><strong>MSE:</strong></p>
+<p><strong>Prediction at x=6:</strong></p>
+<p><span id="확인할-점-1"></span></p>
+<h3 id="points-to-check-1">Points to check</h3>
+<ul>
+<li>Did you preserve the fitting method and all samples except the one changed?</li>
+</ul>
+</section><section class="notebook-cell">
+<p><span id="다른-입력에서도-확인하기"></span></p>
+<h2 id="checking-other-inputs">Checking Other Inputs</h2>
+<p><span id="시작-조건-2"></span></p>
+<h3 id="starting-conditions-2">Starting conditions</h3>
+<p>Plot predictions at <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>6</mn><mo>,</mo><mn>8</mn><mo>,</mo><mn>10</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">x\in\{6,8,10\}</annotation></semantics></math></span> and distinguish them from predictions within the observed range.</p>
+<p><span id="진행-방법-2"></span></p>
+<h3 id="procedure-2">Procedure</h3>
+<ol type="1">
+<li>Use the two models trained above to calculate predictions for <span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>x</mi><mo>∈</mo><mo form="prefix" stretchy="false">{</mo><mn>6</mn><mo>,</mo><mn>8</mn><mo>,</mo><mn>10</mn><mo form="postfix" stretchy="false">}</mo></mrow><annotation encoding="application/x-tex">x\in\{6,8,10\}</annotation></semantics></math></span>. Record both models' predictions in the same table.</li>
+<li>Draw prediction lines over a range covering the original observations and the three new inputs. Use different symbols for observed points and new predictions. For the new inputs, record predictions and whether they lie within the observed range, rather than ground truth values.</li>
+<li>Explain how the difference between the two models' predictions changes farther outside the observed range.</li>
+</ol>
+<p><span id="남길-결과-2"></span></p>
+<h3 id="results-to-retain-2">Results to retain</h3>
+<ul>
+<li>A prediction table for the three new inputs and a prediction plot that distinguishes the observed range.</li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Use the preceding activity's data and functions to check the specified new examples.
+</code></pre></section><section class="notebook-cell">
+<p><span id="결과-기록자가-점검-2"></span></p>
+<h2 id="record-results-and-self-check-2">Record results and self-check</h2>
+<p><strong>New input x:</strong></p>
+<p><strong>Model predictions for the original data:</strong></p>
+<p><strong>Model predictions for the modified data:</strong></p>
+<p><strong>Inside the observed range or not; difference between the two predictions:</strong></p>
+<p><span id="확인할-점-2"></span></p>
+<h3 id="points-to-check-2">Points to check</h3>
+<ul>
+<li>Did you avoid interpreting predictions for new inputs without ground truth as actual errors?</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">Author and usage information</a></footer></body></html>

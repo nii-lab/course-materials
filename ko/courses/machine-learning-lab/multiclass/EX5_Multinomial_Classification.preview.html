@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>Multinomial Classification</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/machine-learning-lab/multiclass/EX5_Multinomial_Classification.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="EX5_Multinomial_Classification.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/machine-learning-lab/multiclass/EX5_Multinomial_Classification.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">전기공학머신러닝실습</a></header><main class="directory" id="main"><h1>Multinomial Classification</h1><nav class="notebook-actions"><a download="" href="EX5_Multinomial_Classification.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/machine-learning-lab/multiclass/EX5_Multinomial_Classification.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h3 id="imports">Imports</h3>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as func
+import torch.optim as opt
+
+#from google.colab import drive
+#drive.mount('/content/drive')
+
+# Seed 고정
+torch.manual_seed(1)</code></pre><pre class="notebook-output">&lt;torch._C.Generator at 0x7f742f459070&gt;</pre></section><section class="notebook-cell">
+<h3 id="data-loading">1 Data loading</h3>
+<table>
+<thead>
+<tr>
+<th><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>1</mn></msub><annotation encoding="application/x-tex">x_1</annotation></semantics></math></span></th>
+<th><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>2</mn></msub><annotation encoding="application/x-tex">x_2</annotation></semantics></math></span></th>
+<th><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>3</mn></msub><annotation encoding="application/x-tex">x_3</annotation></semantics></math></span></th>
+<th><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>x</mi><mn>4</mn></msub><annotation encoding="application/x-tex">x_4</annotation></semantics></math></span></th>
+<th><span class="math inline"><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>y</mi><annotation encoding="application/x-tex">y</annotation></semantics></math></span></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>1</td>
+<td>1</td>
+<td>2</td>
+</tr>
+<tr>
+<td>2</td>
+<td>1</td>
+<td>3</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td>3</td>
+<td>1</td>
+<td>3</td>
+<td>4</td>
+<td>2</td>
+</tr>
+<tr>
+<td>4</td>
+<td>1</td>
+<td>5</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>7</td>
+<td>5</td>
+<td>5</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>2</td>
+<td>5</td>
+<td>6</td>
+<td>1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>6</td>
+<td>6</td>
+<td>6</td>
+<td>0</td>
+</tr>
+<tr>
+<td>1</td>
+<td>7</td>
+<td>7</td>
+<td>7</td>
+<td>0</td>
+</tr>
+</tbody>
+</table>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Data 수동으로 입력하기
+x_train = torch.FloatTensor([[1, 2, 1, 1], [2, 1, 3, 2], [3, 1, 3, 4], [4, 1, 5, 5],
+               [1, 7, 5, 5], [1, 2, 5, 6], [1, 6, 6, 6], [1, 7, 7, 7]])
+y_train = torch.LongTensor([2, 2, 2, 1, 1, 1, 0, 0])
+
+print(x_train)
+print(x_train.shape)
+print(y_train)
+print(y_train.shape)
+
+# Model 초기화 (입력 dim, 출력 dim)
+model = nn.Linear(4, 3)</code></pre><pre class="notebook-output">tensor([[1., 2., 1., 1.],
+        [2., 1., 3., 2.],
+        [3., 1., 3., 4.],
+        [4., 1., 5., 5.],
+        [1., 7., 5., 5.],
+        [1., 2., 5., 6.],
+        [1., 6., 6., 6.],
+        [1., 7., 7., 7.]])
+torch.Size([8, 4])
+tensor([2, 2, 2, 1, 1, 1, 0, 0])
+torch.Size([8])
+</pre></section><section class="notebook-cell">
+<h3 id="hypothesis-cost-and-optimization">2 Hypothesis, Cost and Optimization</h3>
+<ul>
+<li><p>다음 수식이 맞다고 가정한다 <span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>y</mi><mrow><mi>h</mi><mi>y</mi><mi>p</mi><mi>o</mi></mrow></msub><mo>=</mo><mi>H</mi><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>S</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo form="prefix" stretchy="false">(</mo><mi>L</mi><mi>i</mi><mi>n</mi><mi>e</mi><mi>a</mi><mi>r</mi><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex"> y_{hypo} = H(x) = Softmax( Linear(x) ) </annotation></semantics></math></span> <span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>L</mi><mi>i</mi><mi>n</mi><mi>e</mi><mi>a</mi><mi>r</mi><mo form="prefix" stretchy="false">(</mo><mi>x</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mi>W</mi><mo>⋅</mo><mi>x</mi><mo>+</mo><mi>b</mi></mrow><annotation encoding="application/x-tex"> Linear(x) = W \cdot x + b </annotation></semantics></math></span> <span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>S</mi><mi>o</mi><mi>f</mi><mi>t</mi><mi>m</mi><mi>a</mi><mi>x</mi><mo form="prefix" stretchy="false">(</mo><mi>X</mi><mo form="postfix" stretchy="false">)</mo><mo>=</mo><mo form="prefix" stretchy="false">[</mo><msub><mi>y</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><mo>,</mo><msub><mi>y</mi><mi>C</mi></msub><mo form="postfix" stretchy="false">]</mo><mo>,</mo><mspace width="0.278em"></mspace><mspace width="0.278em"></mspace><msub><mi>y</mi><mi>i</mi></msub><mo>=</mo><mfrac><msup><mi>e</mi><msub><mi>x</mi><mi>i</mi></msub></msup><mrow><munderover><mo>∑</mo><mrow><mi>j</mi><mo>=</mo><mn>1</mn></mrow><mi>C</mi></munderover><msup><mi>e</mi><msub><mi>x</mi><mi>j</mi></msub></msup></mrow></mfrac></mrow><annotation encoding="application/x-tex"> Softmax(X) = [y_1, ..., y_C], \;\; y_i = \frac{e^{x_i}}{\sum_{j=1}^C e^{x_j}} </annotation></semantics></math></span></p></li>
+<li><p>Cost function으로 Cross Entropy를 이용한다 <span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>−</mi><munderover><mo>∑</mo><mrow><mi>i</mi><mo>=</mo><mn>1</mn></mrow><mi>C</mi></munderover><msub><mi>y</mi><mrow><mi>t</mi><mi>r</mi><mi>a</mi><mi>i</mi><mi>n</mi><mo>,</mo><mi>i</mi></mrow></msub><mi>l</mi><mi>o</mi><mi>g</mi><mo form="prefix" stretchy="false">(</mo><msub><mi>y</mi><mrow><mi>h</mi><mi>y</mi><mi>p</mi><mi>o</mi><mo>,</mo><mi>i</mi></mrow></msub><mo form="postfix" stretchy="false">)</mo></mrow><annotation encoding="application/x-tex"> - \sum_{i=1}^{C} y_{train, i}log(y_{hypo, i})</annotation></semantics></math></span></p></li>
+<li><p>Pytorch의 cross entropy loss function에는 softmax가 이미 포함되어 있음에 주의!</p>
+<ul>
+<li><strong>그렇기 때문에, model을 그냥 linear model을 사용한다!</strong></li>
+<li>y_train 입력 형태는 class의 index이다 (onehot encoding을 해줄 필요 없다)</li>
+</ul></li>
+</ul>
+</section><section class="notebook-cell"><pre class="notebook-code"><code># Optimizer 설정 (learning rate = 1로 설정)
+optimizer = opt.SGD(model.parameters(), lr=0.1)
+
+# 반복
+for epoch in range(1000):
+
+  # Cost 계산 / mse_loss(가정에의한값, 참값)
+  y_hypo = model(x_train)
+  cost = func.cross_entropy(y_hypo, y_train)
+
+  # cost를 이용해 model update
+  optimizer.zero_grad()
+  cost.backward()
+  optimizer.step()
+
+  # 10번 마다 중간결과 출력
+  if epoch % 100 == 99:
+    correct_prediction = y_hypo.argmax(dim=1) == y_train
+    accuracy = correct_prediction.sum().item() / len(correct_prediction)
+    print('Epoch {:4d}/{} Cost: {:.6f} Accuracy {:2.2f}%'.format(
+            epoch, 1000, cost.item(), accuracy * 100,
+    ))</code></pre><pre class="notebook-output">Epoch   99/1000 Cost: 0.714870 Accuracy 75.00%
+Epoch  199/1000 Cost: 0.633744 Accuracy 62.50%
+Epoch  299/1000 Cost: 0.576285 Accuracy 62.50%
+Epoch  399/1000 Cost: 0.525853 Accuracy 87.50%
+Epoch  499/1000 Cost: 0.478306 Accuracy 87.50%
+Epoch  599/1000 Cost: 0.432054 Accuracy 87.50%
+Epoch  699/1000 Cost: 0.386326 Accuracy 87.50%
+Epoch  799/1000 Cost: 0.340779 Accuracy 87.50%
+Epoch  899/1000 Cost: 0.295738 Accuracy 87.50%
+Epoch  999/1000 Cost: 0.255138 Accuracy 100.00%
+</pre></section><section class="notebook-cell">
+<h3 id="assignment">3 Assignment</h3>
+<ul>
+<li>Data 파일을 이용한 Multinomial Classification
+<ul>
+<li>data_multinomial_classification.csv을 이용해 학습한다
+<ul>
+<li>16개의 input, 1개의 output</li>
+</ul></li>
+</ul></li>
+</ul>
+<p><span class="math display"><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo form="prefix" stretchy="false">[</mo><msub><mi>x</mi><mn>1</mn></msub><mo>,</mo><mi>.</mi><mi>.</mi><mi>.</mi><msub><mi>x</mi><mn>16</mn></msub><mo>,</mo><mi>y</mi><mo form="postfix" stretchy="false">]</mo></mrow><annotation encoding="application/x-tex"> [x_1, ... x_{16}, y] </annotation></semantics></math></span></p>
+<ul>
+<li>Accuracy 95% 이상을 달성한다</li>
+</ul>
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>

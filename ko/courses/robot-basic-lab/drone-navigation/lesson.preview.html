@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+
+<html lang="ko"><head><meta charset="utf-8"/><meta content="width=device-width,initial-scale=1" name="viewport"/><title>드론 이동 · 학습</title><link data-course-ui="" href="../../../../assets/courses/course-ui.css?v=60ebadda739d" rel="stylesheet"/><script data-course-ui="" defer="" src="../../../../assets/courses/course-ui.js?v=60ebadda739d"></script><meta content="noindex,follow" name="robots"/><link href="https://nii-lab.github.io/ko/courses/robot-basic-lab/drone-navigation/lesson.preview.html" rel="canonical"/><link href="../../../../assets/distribution.css" rel="stylesheet"/><script defer="" src="../../../../assets/distribution.js"></script></head><body class="course-home"><nav aria-label="Language" class="distribution-language"><a aria-current="page" href="lesson.preview.html" hreflang="ko">한국어</a> <a href="../../../../en/courses/robot-basic-lab/drone-navigation/lesson.preview.html" hreflang="en">EN</a> </nav><header data-course-shell=""><a href="../../index.html">강의자료</a> · <a href="../index.html">로봇기초실습</a></header><main class="directory" id="main"><h1>드론 이동 · 학습</h1><nav class="notebook-actions"><a download="" href="lesson.ipynb">Colab 노트북 다운로드</a><a href="https://colab.research.google.com/github/nii-lab/course-materials/blob/master/ko/courses/robot-basic-lab/drone-navigation/lesson.ipynb#copy=true" rel="noopener noreferrer" target="_blank">Colab 실행 ↗</a></nav><section class="notebook-cell">
+</section><section class="notebook-cell">
+<h2 id="실행-조건">실행 조건</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/execution -->
+<p>이 실습은 좌표 시뮬레이션입니다. 실제 비행으로 확장할 때는 제공 장비의 좌표계·단위와 명령 응답 방식을 별도로 대조합니다. <!-- /exercise-guidance:robot-basic-lab/drone-navigation/execution --></p>
+</section><section class="notebook-cell">
+<h2 id="이번에-배울-내용">이번에 배울 내용</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-intro -->
+<p>앞·옆 이동의 기준이 회전 후에도 같다고 생각하면 Path가 어긋납니다. Coordinate Frame을 계산으로 먼저 확인합니다. <!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-intro --></p>
+</section><section class="notebook-cell">
+<h2 id="전체-흐름">전체 흐름</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-flow -->
+<p>영상·입력 사건 → 좌표·유효성 검사 → 제한된 명령 → Path·실패 확인 <!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-flow --></p>
+</section><section class="notebook-cell">
+<h2 id="body-frame과-world-frame">Body Frame과 World Frame</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-1 -->
+<p>기체의 앞쪽을 x, 왼쪽을 y로 정하면, yaw 회전 뒤의 전진은 World Frame에서 다른 방향이 됩니다. yaw=90°일 때 동체 전방 이동은 세계 y 방향으로 이어집니다.</p>
+<p>회전과 이동의 순서는 일반적으로 바꿔도 같지 않습니다. <!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-1 --></p>
+</section><section class="notebook-cell">
+<h2 id="path와-오차를-함께-보기">Path와 오차를 함께 보기</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-2 -->
+<p>명령 Path가 맞더라도 이동 거리 오차가 누적되면 도착점이 달라집니다. 먼저 모의 Path에서 좌표·단위·회전 부호를 확인한 뒤 여러 오차 조건의 도착점 분포를 봅니다. 실제 비행 명령은 이 계산과 별도로 검증합니다. <!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-2 --></p>
+</section><section class="notebook-cell">
+<h2 id="matlab과-python의-tello-명령-비교">MATLAB과 Python의 Tello 명령 비교</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-3 -->
+<p>기존 MATLAB 자료는 Ryze Tello 지원 패키지를 사용합니다. Python에서는 DJITelloPy로 같은 동작을 표현할 수 있습니다.</p>
+<p>MATLAB의 거리 인자는 m, Python move_forward의 인자는 cm이며 회전 API의 단위와 방향도 확인해야 합니다.</p>
+<p>예: 0.5 m 전진은 MATLAB의 moveforward(r,‘Distance’,0.5)와 Python의 tello.move_forward(50)에 대응합니다. 이 호출은 비행 중인 기체에 보내는 명령이므로 기본 예제에서는 명령 목록과 단위 변환만 확인합니다. <!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-3 --></p>
+</section><section class="notebook-cell">
+<h2 id="풀이-예제">풀이 예제</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-example -->
+<p>시작 위치 (0,0) m, yaw=0°. 전방은 body +x, 오른쪽은 body -y, yaw는 반시계방향입니다. 제공 commands 5개를 사용합니다. <!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-example --></p>
+</section><section class="notebook-cell"><pre class="notebook-code"><code>import math
+import numpy as np
+import matplotlib.pyplot as plt
+# world x: 처음의 전방, world y: 처음의 왼쪽, yaw: 반시계방향 degree
+commands=[('forward',1.),('right',.5),('yaw',90.),('forward',1.),('right',.5)]
+pos=np.array([0.,0.]);yaw=0.;trace=[pos.copy()]
+def body_to_world(dx,dy,yaw_deg):
+    a=math.radians(yaw_deg)
+    return np.array([[math.cos(a),-math.sin(a)],[math.sin(a),math.cos(a)]])@np.array([dx,dy])
+# 예: yaw=90에서 전방 1 m의 world 변위
+print(body_to_world(1,0,90))
+</code></pre><pre class="notebook-output">[6.123234e-17 1.000000e+00]
+</pre></section><section class="notebook-cell">
+<h2 id="공식-문서데이터">공식 문서·데이터</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-resources -->
+<ul>
+<li><a href="https://www.mathworks.com/help/supportpkg/ryzeio/setup-and-configuration.html" rel="noopener noreferrer" target="_blank">MATLAB · Ryze Tello 지원</a></li>
+<li><a href="https://djitellopy.readthedocs.io/en/latest/tello/" rel="noopener noreferrer" target="_blank">Python · DJITelloPy API</a> <!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-resources --></li>
+</ul>
+</section><section class="notebook-cell">
+<h2 id="참고-예제">참고 예제</h2>
+<!-- exercise-guidance:robot-basic-lab/drone-navigation/learning-references -->
+<details class="learning-references">
+<summary>
+추가 예제 보기
+</summary>
+<p>
+<a data-course-reference="" href="index.html">참고 자료</a>
+</p>
+</details>
+<!-- /exercise-guidance:robot-basic-lab/drone-navigation/learning-references -->
+</section></main><footer class="course-footer" data-course-shell=""><span>NiiL</span><a href="../../reuse.html">저자·이용 안내</a></footer></body></html>
